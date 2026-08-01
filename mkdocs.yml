@@ -1,0 +1,56 @@
+site_name: 主翼設計解析プログラム 学習ドキュメント
+site_description: 人力飛行機の主翼設計解析プログラム(MATLAB→Excel VBA移植版)の仕組みを解説する学習ドキュメント
+site_author: WidMillClub
+
+theme:
+  name: material
+  language: ja
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      toggle:
+        icon: material/brightness-7
+        name: ダークモードに切り替え
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      toggle:
+        icon: material/brightness-4
+        name: ライトモードに切り替え
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.instant
+    - search.suggest
+    - content.code.copy
+    - toc.follow
+
+nav:
+  - はじめに: 00_はじめに.md
+  - 全体アーキテクチャ: 01_全体アーキテクチャ.md
+  - 空力理論編: 02_空力理論編.md
+  - 空力実装編: 03_空力実装編.md
+  - 構造理論編: 04_構造理論編.md
+  - 構造実装編: 05_構造実装編.md
+  - 用語集: 06_用語集.md
+  - 既知の制限事項: 07_既知の制限事項.md
+
+markdown_extensions:
+  - admonition
+  - tables
+  - toc:
+      permalink: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+
+extra:
+  social: []
