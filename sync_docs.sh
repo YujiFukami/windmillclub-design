@@ -14,6 +14,9 @@ for f in "$SRC"/*.md; do
     esac
     cp "$f" "$DST/"
 done
+if [ -f "$SRC/CNAME" ]; then
+    cp "$SRC/CNAME" "$DST/"
+fi
 if [ -d "$SRC/figures" ]; then
     mkdir -p "$DST/figures"
     cp "$SRC"/figures/* "$DST/figures/" 2>/dev/null || true
