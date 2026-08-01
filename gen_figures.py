@@ -302,6 +302,258 @@ def fig_tsai_wu_envelope():
     save(fig, 'tsai_wu_envelope.svg')
 
 
+# ============================================================
+# 図7: 典型的な2次元翼型のCl-α/Cd-α曲線 (02_空力理論編.md §6)
+# ============================================================
+def fig_airfoil_polar():
+    alpha = np.linspace(-8, 16, 300)
+
+    # 説明用の典型的な曲線(実データベースの特定翼型の値ではない)
+    a0 = 2 * np.pi / 180 * 0.9   # 揚力傾斜[1/deg]相当(概ね2π/radを翼型分だけ少し下げた値)
+    alpha_l0 = -4.0
+    cl_lin = a0 * (alpha - alpha_l0)
+    stall_start = 11.0
+    cl = np.where(alpha < stall_start, cl_lin,
+                  cl_lin[np.searchsorted(alpha, stall_start)] *
+                  np.exp(-0.15 * (alpha - stall_start)))
+
+    cd0 = 0.008
+    stall_excess = np.clip(alpha - stall_start, 0, None)
+    cd = cd0 + 0.012 * ((alpha - 4) / 10) ** 2 + 0.05 * stall_excess ** 1.5 / 10
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.5, 4))
+
+    ax1.plot(alpha, cl, color='#1d6fa5', lw=2)
+    ax1.axhline(0, color='#888', lw=0.6)
+    ax1.axvline(alpha_l0, color='#ab4a3a', lw=0.8, ls='--')
+    ax1.text(alpha_l0, -0.15, 'α_L0', color='#ab4a3a', fontsize=9, ha='center')
+    ax1.axvline(stall_start, color='#b3791f', lw=0.8, ls=':')
+    ax1.text(stall_start, max(cl) * 0.5, ' 失速開始\n(テーブル外挿)', color='#b3791f', fontsize=8)
+    ax1.set_xlabel('迎角 α [deg]')
+    ax1.set_ylabel('Cl(揚力係数)')
+    ax1.set_title('Cl-α曲線(概念図)', fontsize=10)
+
+    ax2.plot(alpha, cd, color='#2f7d55', lw=2)
+    ax2.set_xlabel('迎角 α [deg]')
+    ax2.set_ylabel('Cd(抗力係数)')
+    ax2.set_title('Cd-α曲線(概念図)', fontsize=10)
+
+    fig.suptitle('2次元翼型データの典型例(特定の翼型の実測値ではなく説明用)', fontsize=10.5, y=1.02)
+    fig.tight_layout()
+    save(fig, 'airfoil_polar.svg')
+
+
+# ============================================================
+# 図8: 圧力中心Cpの移動 vs 空力中心ACの固定 (02_空力理論編.md §7)
+# ============================================================
+def fig_pressure_center():
+    fig, ax = plt.subplots(figsize=(7.5, 3.6))
+
+    # 簡易翼型シルエット(キャンバー付き、説明用)
+    x = np.linspace(0, 1, 200)
+    y_camber = 0.06 * np.sin(np.pi * x) * (1 - 0.3 * x)
+    y_upper = y_camber + 0.04 * np.sin(np.pi * x) * (1 - x)
+    y_lower = y_camber - 0.02 * np.sin(np.pi * x) * (1 - x)
+    ax.fill_between(x, y_lower + 0.35, y_upper + 0.35, color='#dcebf5', edgecolor='#14283d', lw=1)
+
+    ax.axhline(0, color='#333', lw=0.8)
+    ax.plot([0, 1], [0, 0], color='#333', lw=0.8)
+    ax.text(-0.03, 0, '0%\n(前縁)', fontsize=8, ha='right', va='center')
+    ax.text(1.03, 0, '100%\n(後縁)', fontsize=8, ha='left', va='center')
+
+    # 空力中心(固定)
+    ax.scatter([0.25], [0], color='#2f7d55', marker='*', s=180, zorder=6)
+    ax.text(0.25, -0.13, '空力中心(AC)\n迎角によらずほぼ一定', fontsize=8.5, color='#2f7d55', ha='center')
+
+    # 圧力中心(迎角で移動)の例3点
+    cp_examples = [(0.60, '低迎角'), (0.35, '中迎角'), (0.27, '高迎角')]
+    ys = [0.06, 0.10, 0.14]
+    for (cpx, label), yy in zip(cp_examples, ys):
+        ax.scatter([cpx], [0], color='#ab4a3a', s=45, zorder=5)
+        ax.annotate('', xy=(cpx, 0), xytext=(cpx, yy),
+                     arrowprops=dict(arrowstyle='->', color='#ab4a3a', lw=0.8))
+        ax.text(cpx, yy + 0.015, f'{label}\nCp', fontsize=7.5, color='#ab4a3a', ha='center')
+
+    ax.set_xlim(-0.15, 1.15)
+    ax.set_ylim(-0.2, 0.55)
+    ax.set_aspect('equal')
+    ax.axis('off')
+    ax.set_title('圧力中心(Cp、迎角で移動)と空力中心(AC、ほぼ固定)の違い(概念図)', fontsize=10.5)
+    fig.tight_layout()
+    save(fig, 'pressure_center.svg')
+
+
+# ============================================================
+# 図9: プライごとの物性→積層等価物性への重み付き平均 (04_構造理論編.md §3)
+# ============================================================
+def fig_ply_to_laminate():
+    # 説明用の例(4層、角度違い)。実データではない
+    angles = [0, 45, -45, 90]
+    thick = [0.15, 0.20, 0.20, 0.15]  # mm、厚み比の重み
+    Ex, Ey, Gxy, nu_xy = 130e9, 9e9, 5e9, 0.30
+    nu_yx = nu_xy * Ey / Ex
+    R = 1 / (1 - nu_xy * nu_yx)
+    Qxx, Qyy, Qxy, Qss = R * Ex, R * Ey, R * nu_yx * Ex, Gxy
+    u1 = 0.125 * (3 * Qxx + 3 * Qyy + 2 * Qxy + 4 * Qss)
+    u2 = 0.5 * (Qxx - Qyy)
+    u3 = 0.125 * (Qxx + Qyy - 2 * Qxy - 4 * Qss)
+
+    def q11_of(theta_deg):
+        t = np.radians(theta_deg)
+        return u1 + u2 * np.cos(2 * t) + u3 * np.cos(4 * t)
+
+    q11_per_ply = [q11_of(a) for a in angles]
+    total_t = sum(thick)
+    ex_eff = sum(q * t for q, t in zip(q11_per_ply, thick)) / total_t   # 簡易版(A11相当の重み付き平均のイメージ)
+
+    fig, ax = plt.subplots(figsize=(7, 4.2))
+    xs = np.arange(len(angles))
+    bars = ax.bar(xs, np.array(q11_per_ply) / 1e9, width=0.5, color='#8fb6d4', edgecolor='#14283d')
+    for i, (a, t) in enumerate(zip(angles, thick)):
+        ax.text(i, q11_per_ply[i] / 1e9 + 2, f'{a}°\n厚み比{t/total_t:.0%}', ha='center', fontsize=8.5)
+
+    ax.axhline(ex_eff / 1e9, color='#ab4a3a', lw=2, ls='--')
+    ax.text(len(angles) - 0.4, ex_eff / 1e9 + 3, '積層全体の等価値\n(厚み比で重み付き平均)',
+            color='#ab4a3a', fontsize=8.5)
+
+    ax.set_ylim(0, max(q11_per_ply) / 1e9 * 1.22)
+    ax.set_xticks(xs)
+    ax.set_xticklabels([f'層{i+1}' for i in range(len(angles))])
+    ax.set_ylabel('Q̄11 [GPa](層ごとの軸方向剛性に相当)')
+    ax.set_title('層ごとに異なる物性 → 積層全体の等価物性への重み付き平均(概念図)', fontsize=10.5)
+    fig.tight_layout()
+    save(fig, 'ply_to_laminate.svg')
+
+
+# ============================================================
+# 図10: 桁の片持ち梁モデル(座標系) (04_構造理論編.md §1)
+# ============================================================
+def fig_cantilever_model():
+    fig, ax = plt.subplots(figsize=(8, 4.4))
+
+    beam_y = 0
+    ax.plot([0, 10], [beam_y, beam_y], color='#14283d', lw=4, solid_capstyle='butt', zorder=3)
+
+    # 固定端のハッチング(翼根)
+    for i in range(8):
+        yy = -0.35 + i * 0.1
+        ax.plot([-0.35, -0.05], [yy, yy + 0.1], color='#333', lw=1)
+    ax.plot([-0.05, -0.05], [-0.35, 0.45], color='#14283d', lw=2)
+
+    # 座標軸(梁の上側)
+    ax.annotate('', xy=(1.3, beam_y), xytext=(0, beam_y), arrowprops=dict(arrowstyle='->', color='#2f7d55', lw=1.5))
+    ax.text(1.45, beam_y + 0.55, 'x(スパン方向)', color='#2f7d55', fontsize=8.5, ha='left')
+    ax.annotate('', xy=(0, beam_y + 1.15), xytext=(0, beam_y), arrowprops=dict(arrowstyle='->', color='#ab4a3a', lw=1.5))
+    ax.text(0.15, beam_y + 1.2, 'y(揚力方向)', color='#ab4a3a', fontsize=8.5)
+
+    # 節点ラベル(梁の上側、座標軸と被らない位置)
+    ax.text(0, beam_y + 0.75, '翼根(節点1)\n完全固定(変位・回転=0)', fontsize=8.5, ha='left', color='#333')
+    ax.text(10, beam_y + 0.35, '翼端\n(自由端)', fontsize=8.5, ha='center', color='#333')
+    ax.scatter([10], [0], color='#14283d', s=30, zorder=5)
+
+    # 分布荷重(揚力)矢印: 下から上向き(揚力は上向きの力であることを明示)
+    for x in np.linspace(1, 9.3, 9):
+        h = 0.5 + 0.15 * np.sin((x / 10) * np.pi)
+        ax.annotate('', xy=(x, beam_y), xytext=(x, beam_y - h),
+                     arrowprops=dict(arrowstyle='->', color='#1d6fa5', lw=1.2))
+    ax.text(5, -1.15, '分布荷重(揚力、翼根〜翼端で変化。上向きの力)', color='#1d6fa5', fontsize=9, ha='center')
+
+    ax.set_xlim(-1.2, 11)
+    ax.set_ylim(-1.5, 1.6)
+    ax.axis('off')
+    ax.set_title('桁の片持ち梁モデル(翼根固定・翼端自由、分布荷重を受ける)', fontsize=10.5)
+    fig.tight_layout()
+    save(fig, 'cantilever_model.svg')
+
+
+# ============================================================
+# 図11: 3D梁要素の6自由度 (04_構造理論編.md §6)
+# ============================================================
+def fig_beam_6dof():
+    fig, ax = plt.subplots(figsize=(7.5, 4.5))
+
+    n1, n2 = (2.6, 1.0), (8.6, 1.0)
+    ax.plot([n1[0], n2[0]], [n1[1], n2[1]], color='#14283d', lw=5, solid_capstyle='round', zorder=1)
+    ax.scatter([n1[0], n2[0]], [n1[1], n2[1]], color='#14283d', s=70, zorder=5)
+    ax.text(n1[0], n1[1] - 0.35, '節点 i', fontsize=10, ha='center')
+    ax.text(n2[0], n2[1] - 0.35, '節点 i+1', fontsize=10, ha='center')
+    ax.text(n2[0], n2[1] + 2.55, '(節点i+1にも\n同じ6自由度がある)', fontsize=8, ha='center', color='#666')
+
+    # ---- 左側の凡例エリア: 並進3方向(u,v,w) ----
+    ox, oy = 0.9, 3.6
+    trans = [('u(軸方向)', (1, 0), '#1d6fa5'), ('v(揚力方向)', (0, 1), '#ab4a3a'), ('w(抗力方向)', (-0.7, 0.7), '#b3791f')]
+    ax.text(ox, oy + 1.5, '並進 3方向', fontsize=9.5, ha='center', fontweight='bold')
+    for label, (dx, dy), c in trans:
+        ax.annotate('', xy=(ox + dx * 1.1, oy + dy * 1.1), xytext=(ox, oy),
+                     arrowprops=dict(arrowstyle='->', color=c, lw=1.8))
+        ax.text(ox + dx * 1.35, oy + dy * 1.35, label, fontsize=8.5, color=c, ha='center', va='center')
+
+    # ---- 右側の凡例エリア: 回転3方向(θx,θy,θz) ----
+    from matplotlib.patches import Arc
+    rx = 6.5
+    rot_specs = [('θx(ねじれ)', 0, '#2f7d55'), ('θy', 1.0, '#6b4fa0'), ('θz', -1.0, '#c26a2d')]
+    ax.text(rx, oy + 1.5, '回転 3方向', fontsize=9.5, ha='center', fontweight='bold')
+    for label, offset, c in rot_specs:
+        cx, cy = rx + offset * 1.15, oy
+        arc = Arc((cx, cy), 0.55, 0.55, angle=0, theta1=30, theta2=330, color=c, lw=1.6)
+        ax.add_patch(arc)
+        ax.text(cx, cy - 0.5, label, fontsize=8, color=c, ha='center', va='top')
+
+    # 凡例エリアから節点iへの引き出し線
+    ax.annotate('', xy=(n1[0] - 0.15, n1[1] + 0.15), xytext=(ox, oy - 0.7),
+                 arrowprops=dict(arrowstyle='-', color='#999', lw=0.8, ls='dotted'))
+    ax.annotate('', xy=(n1[0] + 0.15, n1[1] + 0.15), xytext=(rx, oy - 0.7),
+                 arrowprops=dict(arrowstyle='-', color='#999', lw=0.8, ls='dotted'))
+
+    ax.set_xlim(-0.5, 10)
+    ax.set_ylim(-0.3, 5.6)
+    ax.set_aspect('equal')
+    ax.axis('off')
+    ax.set_title('3D梁要素: 1節点あたり6自由度(並進3+回転3)', fontsize=10.5)
+    fig.tight_layout()
+    save(fig, 'beam_6dof.svg')
+
+
+# ============================================================
+# 図12: EIyの2/3係数 vs 第一原理のπ/4係数 (07_既知の制限事項.md)
+# ============================================================
+def fig_eiy_coefficient_bar():
+    fig, ax = plt.subplots(figsize=(5, 4))
+    labels = ['コード実装\n(2/3 ≈ 0.667)', '第一原理の積分\n(π/4 ≈ 0.785)']
+    vals = [2 / 3, np.pi / 4]
+    colors = ['#b3791f', '#1d6fa5']
+    bars = ax.bar(labels, vals, color=colors, width=0.5)
+    for b, v in zip(bars, vals):
+        ax.text(b.get_x() + b.get_width() / 2, v + 0.02, f'{v:.3f}', ha='center', fontsize=10)
+    diff_pct = (vals[1] - vals[0]) / vals[1] * 100   # 第一原理値(π/4)を基準とした差(本編の記述と統一)
+    ax.annotate(f'約{diff_pct:.0f}%の差', xy=(0.5, (vals[0] + vals[1]) / 2), xytext=(0.5, 0.9),
+                fontsize=9.5, ha='center', color='#ab4a3a',
+                arrowprops=dict(arrowstyle='-[', color='#ab4a3a'))
+    ax.set_ylim(0, 1.0)
+    ax.set_ylabel('EIy円環積分の係数')
+    ax.set_title('EIy計算式の係数比較', fontsize=10.5)
+    fig.tight_layout()
+    save(fig, 'eiy_coefficient_bar.svg')
+
+
+# ============================================================
+# 図13: 桁材料データベースの物性比較 (05_構造実装編.md §1)
+# ============================================================
+def fig_material_comparison():
+    # 材料データベース\材料物性.csv の実データ(2026-08時点)
+    materials = ['TR30', 'HRX350\nG125S_G35', '46t', '60t', '80t', 'HR40']
+    ex_gpa = [128.9, 217.53, 237.47, 349.96, 424.95, 251.0]
+
+    fig, ax = plt.subplots(figsize=(8, 4))
+    bars = ax.bar(materials, ex_gpa, color='#8fb6d4', edgecolor='#14283d')
+    for b, v in zip(bars, ex_gpa):
+        ax.text(b.get_x() + b.get_width() / 2, v + 5, f'{v:.0f}', ha='center', fontsize=8.5)
+    ax.set_ylabel('Ex(繊維方向ヤング率) [GPa]')
+    ax.set_title('材料データベースの繊維方向ヤング率Ex比較(材料物性.csvの実データ)', fontsize=10.5)
+    fig.tight_layout()
+    save(fig, 'material_comparison.svg')
+
+
 if __name__ == '__main__':
     fig_cosine_grid()
     fig_fourier_circulation()
@@ -309,4 +561,11 @@ if __name__ == '__main__':
     fig_ring_layers()
     fig_stress_eval_points()
     fig_tsai_wu_envelope()
+    fig_airfoil_polar()
+    fig_pressure_center()
+    fig_ply_to_laminate()
+    fig_cantilever_model()
+    fig_beam_6dof()
+    fig_eiy_coefficient_bar()
+    fig_material_comparison()
     print('all figures generated ->', OUT_DIR)
