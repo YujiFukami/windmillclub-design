@@ -927,6 +927,8 @@
 <p>💻 対応コード: <code>Mod10_材料データベース.bas</code></p>
 </blockquote>
 <p>積層計算(理論編§2)に使う材料物性(Ex, Ey, G, ν, 強度allowable5値)を、「材料データベース\材料物性.csv」から読み込み、材料名(またはシート上で使われている「材料コード」、<code>GetMaterialPropsByCode</code>経由)からルックアップできるようにするモジュールです。空力側の翼型データベース(<code>Mod04_翼型データベース</code>)と同じ「遅延読み込み+辞書キャッシュ」の設計を踏襲しています。</p>
+<p><img alt="材料データベースの物性比較" src="../figures/material_comparison.svg" /></p>
+<p>登録されている6種類の材料は繊維方向ヤング率Exが3倍近く異なります。桁のどの位置にどの材料を使うかは、剛性・強度・重量のトレードオフを踏まえたシート側の入力(積層構成)で決まります。</p>
 <h2 id="2-積層構成のデータ表現とbreakpoint展開">2. 積層構成のデータ表現とbreakpoint展開<a class="headerlink" href="#2-積層構成のデータ表現とbreakpoint展開" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>💻 対応コード: <code>Mod11_桁断面剛性.bas</code> の <code>FindSparRow</code>/<code>RampLookup</code></p>
