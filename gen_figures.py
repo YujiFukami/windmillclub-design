@@ -230,22 +230,26 @@ def fig_stress_eval_points():
         lx, ly = 1.22 * np.cos(np.radians(a)), 1.22 * np.sin(np.radians(a))
         ax.text(lx, ly, f'φ={a}°', fontsize=9, ha='center', va='center', color='#1d6fa5')
 
-    # UD補強(上側の弧、2点: 0°/180°基準の例として左右対称な範囲を図示)
+    # UD補強: パイプを挟んで対称な2箇所(90°側・270°側、桁の曲げで最も応力が
+    # 大きくなる上下の縁)に分けて巻かれ、それぞれの中心(φ=90°, 270°)で評価する
+    # (Mod17_桁強度座屈.bas: phi = (iphi-1)*pi + pi/2 → iphi=1で90°、iphi=2で270°)
     ud_span = 70  # UD補強が覆う円周角の目安(図示用)
-    wedge = Wedge((0, 0), R * 1.12, 90 - ud_span / 2, 90 + ud_span / 2,
-                   width=0.12, facecolor='#f6ead2', edgecolor='#b3791f', lw=1)
-    ax.add_patch(wedge)
-    for a in (90 - ud_span / 2, 90 + ud_span / 2):
-        x, y = R * 1.06 * np.cos(np.radians(a)), R * 1.06 * np.sin(np.radians(a))
+    ud_angles = [90, 270]
+    for center in ud_angles:
+        wedge = Wedge((0, 0), R * 1.12, center - ud_span / 2, center + ud_span / 2,
+                       width=0.12, facecolor='#f6ead2', edgecolor='#b3791f', lw=1)
+        ax.add_patch(wedge)
+        x, y = R * 1.06 * np.cos(np.radians(center)), R * 1.06 * np.sin(np.radians(center))
         ax.scatter([x], [y], color='#b3791f', s=55, marker='D', zorder=5)
-    ax.text(0, R * 1.42, 'UD補強(パイプ外周の一部)\n周方向2点で評価', fontsize=8.5,
-            ha='center', color='#b3791f')
+        ly_sign = 1 if center == 90 else -1
+        ax.text(0, ly_sign * R * 1.62, f'UD補強(φ={center}°側)\nここで評価',
+                fontsize=8.5, ha='center', va='center', color='#b3791f')
 
     ax.set_xlim(-1.6, 1.6)
-    ax.set_ylim(-1.6, 1.6)
+    ax.set_ylim(-1.95, 1.95)
     ax.set_aspect('equal')
     ax.axis('off')
-    ax.set_title('パイプ周方向4点(青)・UD補強2点(橙◆)の\nTsai-Wu応力評価位置', fontsize=10.5)
+    ax.set_title('パイプ周方向4点(青)・UD補強2点(橙◆、φ=90°/270°)の\nTsai-Wu応力評価位置', fontsize=10.5)
     fig.tight_layout()
     save(fig, 'stress_eval_points.svg')
 
