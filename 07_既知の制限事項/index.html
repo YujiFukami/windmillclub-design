@@ -1,0 +1,915 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="人力飛行機の主翼設計解析プログラム(MATLAB→Excel VBA移植版)の仕組みを解説する学習ドキュメント">
+      
+      
+        <meta name="author" content="WidMillClub">
+      
+      
+      
+        <link rel="prev" href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/">
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>既知の制限事項 - 主翼設計解析プログラム 学習ドキュメント</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#既知の制限事項" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href=".." title="主翼設計解析プログラム 学習ドキュメント" class="md-header__button md-logo" aria-label="主翼設計解析プログラム 学習ドキュメント" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            主翼設計解析プログラム 学習ドキュメント
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              既知の制限事項
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ダークモードに切り替え"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="ダークモードに切り替え" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ライトモードに切り替え"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="ライトモードに切り替え" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../00_%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  はじめに
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../01_%E5%85%A8%E4%BD%93%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  全体アーキテクチャ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../02_%E7%A9%BA%E5%8A%9B%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  空力理論編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  空力実装編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../04_%E6%A7%8B%E9%80%A0%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  構造理論編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../05_%E6%A7%8B%E9%80%A0%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  構造実装編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  用語集
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  既知の制限事項
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="主翼設計解析プログラム 学習ドキュメント" class="md-nav__button md-logo" aria-label="主翼設計解析プログラム 学習ドキュメント" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    主翼設計解析プログラム 学習ドキュメント
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00_%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_%E5%85%A8%E4%BD%93%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    全体アーキテクチャ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_%E7%A9%BA%E5%8A%9B%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    空力理論編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    空力実装編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_%E6%A7%8B%E9%80%A0%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造理論編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_%E6%A7%8B%E9%80%A0%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造実装編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    既知の制限事項
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    既知の制限事項
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ねじれ角thxが旧ゴールデンマスターと約29倍ズレたまま未解決" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ねじれ角(THx)が旧ゴールデンマスターと約2.9倍ズレたまま未解決
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-元matlabの未使用出力列str1str1_udは実装していない" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 元MATLABの未使用出力列(str1/str1_UD)は実装していない
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-eipkせん断応力sig6_mxは保持しているが強度評価には使われていない" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. EipK(せん断応力sig6_Mx)は保持しているが強度評価には使われていない
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-検証済みの範囲参考" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 検証済みの範囲(参考)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-ねじれ角thxが旧ゴールデンマスターと約29倍ズレたまま未解決" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. ねじれ角(THx)が旧ゴールデンマスターと約2.9倍ズレたまま未解決
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-元matlabの未使用出力列str1str1_udは実装していない" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 元MATLABの未使用出力列(str1/str1_UD)は実装していない
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-eipkせん断応力sig6_mxは保持しているが強度評価には使われていない" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. EipK(せん断応力sig6_Mx)は保持しているが強度評価には使われていない
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-検証済みの範囲参考" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 検証済みの範囲(参考)
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="既知の制限事項">既知の制限事項<a class="headerlink" href="#既知の制限事項" title="Permanent link">&para;</a></h1>
+<p>このドキュメントは、<code>02</code>〜<code>05</code>で説明した理論・実装のうち、<strong>まだ完全に検証しきれていない部分</strong>をまとめたセーフティネットです。「理論編・実装編に書いてあるから正しいはずだ」と信じ込まず、疑わしい結果が出たときはまずここを確認してください。</p>
+<h2 id="1-ねじれ角thxが旧ゴールデンマスターと約29倍ズレたまま未解決">1. ねじれ角(THx)が旧ゴールデンマスターと約2.9倍ズレたまま未解決<a class="headerlink" href="#1-ねじれ角thxが旧ゴールデンマスターと約29倍ズレたまま未解決" title="Permanent link">&para;</a></h2>
+<p><strong>症状</strong>: 翼端のねじれ角<code>deformation.THx(deformation.Element + 1)</code>の値が、過去に保存された参照データ(<code>keta,aoa=7.csv</code>)のTHx列と比べて、約2.87倍ズレている(他の出力は高精度で一致しているのに、THxだけがズレる)。</p>
+<p><strong>これまでに確認して「原因ではない」と分かっていること</strong>(すべて実データ・Python独立実装との突き合わせで確認済み):</p>
+<ul>
+<li>断面剛性(<code>Mod11_桁断面剛性</code>)のQ16(曲げ-ねじり連成剛性)の式は、元のMATLABコードと文字単位で照合済み、転記ミスはない</li>
+<li>GK(ねじり剛性)は参照CSVと相対誤差1e-9以下で一致</li>
+<li>ねじりモーメント(Mx)は、荷重ベクトル組み立て(<code>Mod15_桁荷重</code>)の時点で参照CSVのMG列と3点で有効数字5〜6桁一致</li>
+<li>FEMの求解方式(ブロックThomas法)を、密行列を直接逆行列で解く方式に置き換えても、結果は完全に一致(ブロックThomas法自体の実装ミスではない)</li>
+<li>Q16の符号・スケールを-20倍〜+50倍の範囲で人為的に振っても、参照値に収束する係数が見当たらない(単純な符号ミス・単位ミスでは説明できない)</li>
+<li>桁自重(<code>weight_main_spar</code>)は参照CSVと完全一致</li>
+<li>翼端たわみUzは参照CSVと約0.2%の差で一致(BMD/SFD/Uyも同様に高精度)</li>
+</ul>
+<p><strong>現在の状況</strong>: 上記のように、ねじれ角の計算に関与するほぼすべての要素(剛性・荷重・求解方式)を個別に検証したが、THxだけがズレる理由は特定できていません。プロジェクトオーナー(ユーザー)の判断により、<strong>この調査は打ち切り</strong>、他の出力(たわみ・曲げモーメント・せん断力・強度・座屈評価、いずれも構造設計上重要な量)の検証結果をもって構造解析パイプラインの完成としています。</p>
+<p><strong>注意点</strong>: 桁の<strong>ねじれ角</strong>そのものを設計判断に使う場合は、この既知の精度差を踏まえて割り引いて評価するか、別途検証してから使ってください。ねじれ角以外の出力(たわみ・BMD・SFD・強度比・座屈安全率)は高精度で検証済みです。</p>
+<h2 id="2-元matlabの未使用出力列str1str1_udは実装していない">2. 元MATLABの未使用出力列(str1/str1_UD)は実装していない<a class="headerlink" href="#2-元matlabの未使用出力列str1str1_udは実装していない" title="Permanent link">&para;</a></h2>
+<p>元のMATLABコード(<code>WING_FEM_IKI.m</code>)には、CSV出力に<code>str1</code>/<code>str1_UD</code>という列がありますが、ソースコード全体を検索しても代入されている箇所が見つからず、配列の初期値(0)のまま出力されている、つまり<strong>元コードの時点で常に0の未使用列</strong>であることを確認しています(実データでも常に0.000000)。このプログラムではこの列を再現していません(<code>Mod17_桁強度座屈.bas</code>のコメント参照)。</p>
+<h2 id="3-eipkせん断応力sig6_mxは保持しているが強度評価には使われていない">3. EipK(せん断応力sig6_Mx)は保持しているが強度評価には使われていない<a class="headerlink" href="#3-eipkせん断応力sig6_mxは保持しているが強度評価には使われていない" title="Permanent link">&para;</a></h2>
+<p><code>clsSparSection.EipK</code>(断面二次極モーメント相当)は、ねじりによるせん断応力<code>sig6_Mx = Mx・r / EipK</code>を計算するために元のMATLABコードにも存在する値ですが、元コードでもこの<code>sig6_Mx</code>は最終的な<code>sig6_plate</code>(Tsai-Wu複合則に使う面内せん断応力)には<strong>足し込まれていません</strong>。つまり元コードの時点で「計算されるが使われない」値です。このプログラムでも同じ挙動を再現するため、<code>EipK</code>は<code>clsSparSection</code>に保持していますが、強度評価(<code>Mod17_桁強度座屈.EvaluateSparStrength</code>)では参照していません。バグではなく、元コードの仕様をそのまま踏襲した結果です。</p>
+<h2 id="4-検証済みの範囲参考">4. 検証済みの範囲(参考)<a class="headerlink" href="#4-検証済みの範囲参考" title="Permanent link">&para;</a></h2>
+<p>上記の制限事項以外の主要な計算は、実データ(<code>keta,aoa=7.csv</code>等)またはPythonによる独立実装との突き合わせで、以下の精度で検証済みです。</p>
+<table>
+<thead>
+<tr>
+<th>項目</th>
+<th>検証方法</th>
+<th>一致精度</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空力解析(CL/CD/V1/Cl_dist等)</td>
+<td>Python独立実装との突き合わせ</td>
+<td>ほぼ完全一致</td>
+</tr>
+<tr>
+<td>断面剛性(EIy/EIz/GK)</td>
+<td>実データCSVとの突き合わせ(500要素)</td>
+<td>相対誤差1e-9以下</td>
+</tr>
+<tr>
+<td>桁自重</td>
+<td>実データCSVとの突き合わせ</td>
+<td>完全一致</td>
+</tr>
+<tr>
+<td>たわみ(Uy/Uz)・BMD・SFD</td>
+<td>実データCSVとの突き合わせ</td>
+<td>高精度一致(Uzは約0.2%差)</td>
+</tr>
+<tr>
+<td>ねじれ角(THx)</td>
+<td>実データCSVとの突き合わせ</td>
+<td><strong>約2.9倍ズレ、未解決(本ドキュメント§1)</strong></td>
+</tr>
+<tr>
+<td>強度(Tsai-Wu比)・座屈安全率</td>
+<td>実シートでの実行確認</td>
+<td>数式・実装の照合は済み、参照値との突き合わせは未実施</td>
+</tr>
+</tbody>
+</table>
+<p>強度・座屈評価(Tsai-Wu比・座屈安全率4方式)は、数式・実装が元のMATLABコードと一致していることは確認済みですが、たわみ・剛性のような<strong>実データとの数値突き合わせはまだ行っていません</strong>。実際の設計判断に使う前に、可能であれば元のMATLAB出力(あれば)との突き合わせを行うことを推奨します。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "navigation.instant", "search.suggest", "content.code.copy", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

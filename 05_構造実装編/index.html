@@ -1,0 +1,1084 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="人力飛行機の主翼設計解析プログラム(MATLAB→Excel VBA移植版)の仕組みを解説する学習ドキュメント">
+      
+      
+        <meta name="author" content="WidMillClub">
+      
+      
+      
+        <link rel="prev" href="../04_%E6%A7%8B%E9%80%A0%E7%90%86%E8%AB%96%E7%B7%A8/">
+      
+      
+        <link rel="next" href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>構造実装編 - 主翼設計解析プログラム 学習ドキュメント</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#構造実装編--04_構造理論編md-のvba実装" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href=".." title="主翼設計解析プログラム 学習ドキュメント" class="md-header__button md-logo" aria-label="主翼設計解析プログラム 学習ドキュメント" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            主翼設計解析プログラム 学習ドキュメント
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              構造実装編
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ダークモードに切り替え"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="ダークモードに切り替え" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ライトモードに切り替え"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="ライトモードに切り替え" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../00_%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  はじめに
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../01_%E5%85%A8%E4%BD%93%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  全体アーキテクチャ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../02_%E7%A9%BA%E5%8A%9B%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  空力理論編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  空力実装編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../04_%E6%A7%8B%E9%80%A0%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  構造理論編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  構造実装編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  用語集
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../07_%E6%97%A2%E7%9F%A5%E3%81%AE%E5%88%B6%E9%99%90%E4%BA%8B%E9%A0%85/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  既知の制限事項
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="主翼設計解析プログラム 学習ドキュメント" class="md-nav__button md-logo" aria-label="主翼設計解析プログラム 学習ドキュメント" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    主翼設計解析プログラム 学習ドキュメント
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00_%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_%E5%85%A8%E4%BD%93%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    全体アーキテクチャ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_%E7%A9%BA%E5%8A%9B%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    空力理論編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    空力実装編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_%E6%A7%8B%E9%80%A0%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造理論編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造実装編
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造実装編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-材料データベース" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 材料データベース
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-積層構成のデータ表現とbreakpoint展開" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 積層構成のデータ表現とbreakpoint展開
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-clt計算の実装q行列eiyq16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. CLT計算の実装(Q行列〜EIy〜Q16)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ud補強断面二次モーメントの実装" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. UD補強断面二次モーメントの実装
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-断面剛性計算の実行エントリポイント" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 断面剛性計算の実行エントリポイント
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-桁自重" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 桁自重
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-荷重ベクトルの組み立てとグリッド橋渡し" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 荷重ベクトルの組み立てとグリッド橋渡し
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-3d梁femの組立ブロックthomas法による求解" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 3D梁FEMの組立・ブロックThomas法による求解
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-強度座屈評価の実装" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. 強度・座屈評価の実装
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-構造解析パイプライン全体のエントリポイント" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. 構造解析パイプライン全体のエントリポイント
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07_%E6%97%A2%E7%9F%A5%E3%81%AE%E5%88%B6%E9%99%90%E4%BA%8B%E9%A0%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    既知の制限事項
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-材料データベース" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 材料データベース
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-積層構成のデータ表現とbreakpoint展開" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 積層構成のデータ表現とbreakpoint展開
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-clt計算の実装q行列eiyq16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. CLT計算の実装(Q行列〜EIy〜Q16)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-ud補強断面二次モーメントの実装" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. UD補強断面二次モーメントの実装
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-断面剛性計算の実行エントリポイント" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 断面剛性計算の実行エントリポイント
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-桁自重" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 桁自重
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-荷重ベクトルの組み立てとグリッド橋渡し" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 荷重ベクトルの組み立てとグリッド橋渡し
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-3d梁femの組立ブロックthomas法による求解" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 3D梁FEMの組立・ブロックThomas法による求解
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-強度座屈評価の実装" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. 強度・座屈評価の実装
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#10-構造解析パイプライン全体のエントリポイント" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. 構造解析パイプライン全体のエントリポイント
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="構造実装編--04_構造理論編md-のvba実装">構造実装編 — <code>04_構造理論編.md</code> のVBA実装<a class="headerlink" href="#構造実装編--04_構造理論編md-のvba実装" title="Permanent link">&para;</a></h1>
+<p><code>04_構造理論編.md</code>で説明した積層理論・3D梁FEM・強度評価の各要素が、実際のVBAコードのどこに対応するかをまとめます。各節の見出しは、コード側の<code>' ●学習資料:</code>アンカーコメントと対応しています。</p>
+<h2 id="1-材料データベース">1. 材料データベース<a class="headerlink" href="#1-材料データベース" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod10_材料データベース.bas</code></p>
+</blockquote>
+<p>積層計算(理論編§2)に使う材料物性(Ex, Ey, G, ν, 強度allowable5値)を、「材料データベース\材料物性.csv」から読み込み、材料名(またはシート上で使われている「材料コード」、<code>GetMaterialPropsByCode</code>経由)からルックアップできるようにするモジュールです。空力側の翼型データベース(<code>Mod04_翼型データベース</code>)と同じ「遅延読み込み+辞書キャッシュ」の設計を踏襲しています。</p>
+<h2 id="2-積層構成のデータ表現とbreakpoint展開">2. 積層構成のデータ表現とbreakpoint展開<a class="headerlink" href="#2-積層構成のデータ表現とbreakpoint展開" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod11_桁断面剛性.bas</code> の <code>FindSparRow</code>/<code>RampLookup</code></p>
+</blockquote>
+<p>桁のマンドレル内径・積層構成(角度・厚さ・材料)・UD補強は、桁上のいくつかの代表点(breakpoint)でのみ値が与えられ、それ以外の位置はそこから展開して求めます。この展開には2種類あります。</p>
+<ul>
+<li><strong>ステップ関数展開</strong>(<code>FindSparRow</code>): 積層角度・厚さ・材料・UD構成は、代表点の値を「その代表点までの区間」にそのまま一定値として適用する。プライ構成は物理的に途中で連続変化しないため、線形補間ではなく階段状の展開が正しい。</li>
+<li><strong>ランプ(線形)展開</strong>(<code>RampLookup</code>): マンドレル内径は、区間ごとに「開始値→終了値」へ線形に変化する。桁の継ぎ目では段付きに一定、最終区間だけ滑らかにテーパーする設計になっている。</li>
+</ul>
+<p>どちらも、代表点を先頭から順に処理して<strong>後の代表点が先の代表点を上書きする</strong>(同じ位置に複数の代表点が重なる場合は後の行が勝つ)という、元のMATLABコードの<code>bunpu</code>関数の仕様をそのまま再現しています。</p>
+<h2 id="3-clt計算の実装q行列eiyq16">3. CLT計算の実装(Q行列〜EIy〜Q16)<a class="headerlink" href="#3-clt計算の実装q行列eiyq16" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod11_桁断面剛性.bas</code> の <code>BuildSparSections</code>(材料不変量u1〜u5からQ̄行列を求める箇所、A行列を組み立てる箇所、EIy3/Q16を円環積分する箇所)</p>
+</blockquote>
+<p>理論編§2の材料不変量U1〜U5とQ̄行列の角度変換は、</p>
+<div class="highlight"><pre><span></span><code>u1 = 0.125 * (3 * qxx + 3 * qyy + 2 * qxy + 4 * qss)
+...
+q11(j) = u1 + u2 * Cos(2 * t) + u3 * Cos(4 * t)
+q16(j) = u2 * 0.5 * Sin(2 * t) + u3 * Sin(4 * t)
+</code></pre></div>
+<p>にそのまま対応します(変数名は<code>u1</code>〜<code>u5</code>、<code>q11</code>〜<code>q66</code>と理論編の記号を踏襲しています)。理論編§3のA行列(厚み比重み付き平均)は、</p>
+<div class="highlight"><pre><span></span><code>Dim w As Double: w = thickMm(j) / ehMm
+a11 = a11 + w * q11(j)
+</code></pre></div>
+<p>のループで組み立て、その逆行列成分から<code>exEff</code>(等価Ex)・<code>gxyEff</code>(等価Gxy)を求めます。理論編§4の円環積分によるEIy・Q16は、</p>
+<div class="highlight"><pre><span></span><code>eiy3 = eiy3 + (2 / 3 * q11(j)) * (z2(j) ^ 4 - z2(j - 1) ^ 4)
+q16Coupling = q16Coupling + pi / 4 * q16(j) * (z2(j) ^ 4 - z2(j - 1) ^ 4)
+</code></pre></div>
+<p>に対応します(<code>z2(j)</code>が層境界の半径)。元のMATLABにはEIyの算出方式が複数用意されていますが、実際に使われているのはこの円環積分方式(<code>analysis_type_EIy = 3</code>)だけなので、他の方式はVBA化していません。</p>
+<h2 id="4-ud補強断面二次モーメントの実装">4. UD補強断面二次モーメントの実装<a class="headerlink" href="#4-ud補強断面二次モーメントの実装" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod11_桁断面剛性.bas</code> の <code>BuildSparSections</code>(<code>iyUD</code>/<code>izUD</code>を計算するループ)</p>
+</blockquote>
+<p>理論編§5の扇形断面二次モーメントは、UDの各層(パイプ外周に巻き足す1層ずつ)ごとに、開き角<code>sita = widths(j) / rIn</code>を使って計算します。</p>
+<div class="highlight"><pre><span></span><code>sita = widths(j) / rIn
+iyUD = iyUD + 0.25 * (rOut ^ 4 - rIn ^ 4) * 2 * (-Cos(pi / 2 + sita / 2) + Cos(pi / 2 - sita / 2) + ...)
+</code></pre></div>
+<p>UDの断面積(<code>areaUD</code>、自重計算用)・剛性への寄与(<code>exUD * iyUD</code>をEIyに加算)もこのブロックでまとめて計算し、<code>clsSparSection</code>(断面剛性の入れ物、要素ごとにEA/GK/EIy/EIz/Q16などをプロパティで保持)へ格納します。</p>
+<h2 id="5-断面剛性計算の実行エントリポイント">5. 断面剛性計算の実行エントリポイント<a class="headerlink" href="#5-断面剛性計算の実行エントリポイント" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod13_桁断面剛性実行.bas</code></p>
+</blockquote>
+<p>「パラメータ_桁」系シートの実データを<code>Mod11_桁断面剛性.BuildSparSections</code>が期待する引数の形へ整え、呼び出すためのエントリポイントです。シート上のUD幅がミリメートル単位で入力されているのに対し<code>BuildSparSections</code>はメートル単位を前提としているため、<code>ConvertUdWidthsToMeters</code>で変換してから渡します(<code>01_全体アーキテクチャ.md</code>の単位注意点を参照)。</p>
+<h2 id="6-桁自重">6. 桁自重<a class="headerlink" href="#6-桁自重" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod14_桁自重.bas</code></p>
+</blockquote>
+<p>パイプ・UDそれぞれの断面積(<code>clsSparSection.Area</code>/<code>AreaUD</code>)に材料密度(固定値1550kgf/m³)と要素長を掛けて各要素の重量を求め、隣接要素の平均を取って<strong>節点</strong>の自重荷重[N]に変換します(<code>BuildSparWeightNodes</code>)。この節点荷重は、<code>Mod15_桁荷重</code>が組み立てる荷重ベクトルのうち揚力方向(fy)から差し引かれます。</p>
+<h2 id="7-荷重ベクトルの組み立てとグリッド橋渡し">7. 荷重ベクトルの組み立てとグリッド橋渡し<a class="headerlink" href="#7-荷重ベクトルの組み立てとグリッド橋渡し" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod15_桁荷重.bas</code> の <code>SplineAeroToFem</code>(グリッド橋渡し)、<code>BuildSparForceVector</code>(荷重ベクトル組み立て)</p>
+</blockquote>
+<p><code>01_全体アーキテクチャ.md</code>で説明した「コサイン分布グリッド→等間隔グリッド」の橋渡しは、<code>SplineAeroToFem</code>が担当します。ユーザーが別途実装済みの3次自然スプライン関数<code>SplineXY_Start1</code>を使い、空力側の半スパン分布(揚力係数Cl_dist・形状抗力係数CdDisJohen・誘導抗力係数CdInd・モーメント係数CmDisJohen・桁位置KetaIti)をFEM側の等間隔グリッドへ変換します。</p>
+<div class="highlight"><pre><span></span><code>Dim splined As Variant: splined = SplineXY_Start1(yHalf, valHalf, element)
+</code></pre></div>
+<p><code>BuildSparForceVector</code>は、変換後の分布に動圧・面積分担(<code>dsFemDis</code>、翼弦長の台形則)を掛けて揚力・抗力・モーメントの節点荷重を求め、そこから桁自重(§6)・二次部材重量(リブ・外皮などの概算、<code>wps</code>係数×翼面積分布)を差し引いて、最終的な荷重ベクトル(節点ごとに[fy, fz, mx]、6自由度中3つ)を組み立てます。</p>
+<div class="highlight"><pre><span></span><code>fy = liftFem(i) * G_ACCEL - wSecondary - wNode(i)   &#39; 揚力 - 二次部材重量 - 桁自重
+</code></pre></div>
+<p>桁位置(KetaIti)は空力側シートがパーセント表記(例: 35=35%)で保持しているため、<code>/ 100#</code>で分率化してから空力中心Cp(0〜1)と揃えて使います。この単位を揃え忘れるとねじりモーメントが2桁ずれて暴走する、という実機テストで見つかった不具合があった箇所です(詳細は<code>07_既知の制限事項.md</code>)。</p>
+<h2 id="8-3d梁femの組立ブロックthomas法による求解">8. 3D梁FEMの組立・ブロックThomas法による求解<a class="headerlink" href="#8-3d梁femの組立ブロックthomas法による求解" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod16_桁FEM.bas</code> の <code>BuildElementBlocks</code>(要素剛性行列)、<code>SolveSparFEM</code>(組立・求解)</p>
+</blockquote>
+<p>理論編§6の6×6ブロック(b1〜b4)は<code>BuildElementBlocks</code>で組み立てます。EIy系列(v-θz平面)の項は<code>c1</code>〜<code>c4</code>、EIz系列(w-θy平面)の項は<code>bigC1</code>〜<code>bigC4</code>、GK(ねじり)は<code>kG</code>、Q16(曲げ-ねじり連成)は<code>qL = q / L</code>として、各ブロックの該当するマス目に配置しています。</p>
+<p>理論編§7のブロックThomas法は<code>SolveSparFEM</code>内で、まず各要素のブロックを隣接要素同士で足し合わせてブロック三重対角行列(<code>D</code>=対角ブロック、<code>U</code>=上側、<code>Lm</code>=下側)を組み立て、</p>
+<div class="highlight"><pre><span></span><code>&#39; ---- 前進消去 ----
+Dp(ip) = Mat6Sub(D(ip), MMult(factor, U(ip - 1)))
+...
+&#39; ---- 後退代入 ----
+Xsol(ip) = MMult(MInverse(Dp(ip)), rhs)
+</code></pre></div>
+<p>という手順で解きます。VBAでReDimしただけのVariant配列は要素が<code>Empty</code>(数値の0ではない)のままになり、これを<code>MInverse</code>/<code>MMult</code>に渡すとエラーになるため、<code>ZeroMat6</code>/<code>ZeroVec6</code>という明示的なゼロ初期化関数を必ず経由する点に注意してください(実際にこの問題で最初の実行時エラーが起きた箇所です)。</p>
+<p>求解後、節点変位から要素ごとの断面内力(Cベクトル、<code>b1・u_i + b2・u_(i+1)</code>等)を計算し、揚力方向のBMD(曲げモーメント分布)・SFD(せん断力分布)、および強度評価(§9)で使う全断面内力(Fx/Fy/Fz/MxInt/MyInt/MzInt)を<code>clsSparDeformation</code>へ格納します。</p>
+<h2 id="9-強度座屈評価の実装">9. 強度・座屈評価の実装<a class="headerlink" href="#9-強度座屈評価の実装" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod17_桁強度座屈.bas</code></p>
+</blockquote>
+<p>理論編§8のTsai-Wu複合則は<code>TsaiWuRatio</code>(2次方程式<code>a・R²+b・R=1</code>を解く部分)、材料主軸への応力回転は<code>RotateToMaterialAxes</code>が担当します。<code>EvaluateSparStrength</code>本体では、FEMで求めた断面内力・変位差(ひずみ)から、断面周方向の各点・各層の応力を計算し、</p>
+<div class="highlight"><pre><span></span><code>ratio = TsaiWuRatio(sigmaX, sigmaY, sigmaS, stx(j), stxd(j), sty(j), styd(j), sts(j))
+If ratio &lt; minRatioPipe Then minRatioPipe = ratio
+</code></pre></div>
+<p>のように最小強度比を要素ごとに求めます(パイプは周方向4点、UDは2点)。</p>
+<p>理論編§9の座屈4方式は、<code>zakutu1</code>〜<code>zakutu4</code>として計算されます。</p>
+<div class="highlight"><pre><span></span><code>zakutu1 = 4 * 2^0.5 / 9 * (yex1*yey1)^0.5 / (1 - rmux1^2*yey1/yex1) * laminateThickM / odI
+zakutu3 = 4 * 2^0.5 / 9 * (exEff*eyEff)^0.5 / (1 - rmux1^2*eyEff/exEff) * laminateThickM / odI
+</code></pre></div>
+<p><code>yex1</code>/<code>yey1</code>(パイプ最外層の実物性)と<code>exEff</code>/<code>eyEff</code>(§3のA行列由来の等価物性)、<code>laminateThickM</code>(パイプ厚のみ)と<code>laminateThickM + udTotalThickM</code>(パイプ+UD厚)の組み合わせで4通りを計算し、実際の最大曲げ応力<code>sig1Max</code>で割って安全率にしています。</p>
+<h2 id="10-構造解析パイプライン全体のエントリポイント">10. 構造解析パイプライン全体のエントリポイント<a class="headerlink" href="#10-構造解析パイプライン全体のエントリポイント" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod18_桁構造解析実行.bas</code> の <code>SolveSparFromAoa</code>/<code>RunSparSolve</code></p>
+</blockquote>
+<p><code>01_全体アーキテクチャ.md</code>で説明した通り、<code>SolveSparFromAoa</code>が空力解析(<code>Mod08</code>)→断面剛性(<code>Mod13</code>→<code>Mod11</code>)→荷重ベクトル(<code>Mod15</code>)→FEM求解(<code>Mod16</code>)→強度評価(<code>Mod17</code>)を、シートの読み書きを介さずメモリ上のオブジェクトで一気通貫に実行する、構造解析側の唯一の入口です。<code>RunSparSolve</code>はこれを「パラメータ設定」シートの取付角で1回実行し、結果の抜粋をイミディエイトウィンドウへ出力する、目視確認用のラッパーです。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "navigation.instant", "search.suggest", "content.code.copy", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

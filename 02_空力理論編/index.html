@@ -1,0 +1,1023 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="人力飛行機の主翼設計解析プログラム(MATLAB→Excel VBA移植版)の仕組みを解説する学習ドキュメント">
+      
+      
+        <meta name="author" content="WidMillClub">
+      
+      
+      
+        <link rel="prev" href="../01_%E5%85%A8%E4%BD%93%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/">
+      
+      
+        <link rel="next" href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>空力理論編 - 主翼設計解析プログラム 学習ドキュメント</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#空力理論編--揚力線理論prandtl-glauert法" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href=".." title="主翼設計解析プログラム 学習ドキュメント" class="md-header__button md-logo" aria-label="主翼設計解析プログラム 学習ドキュメント" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            主翼設計解析プログラム 学習ドキュメント
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              空力理論編
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ダークモードに切り替え"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="ダークモードに切り替え" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ライトモードに切り替え"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="ライトモードに切り替え" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../00_%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  はじめに
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../01_%E5%85%A8%E4%BD%93%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  全体アーキテクチャ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  空力理論編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  空力実装編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../04_%E6%A7%8B%E9%80%A0%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  構造理論編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../05_%E6%A7%8B%E9%80%A0%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  構造実装編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  用語集
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../07_%E6%97%A2%E7%9F%A5%E3%81%AE%E5%88%B6%E9%99%90%E4%BA%8B%E9%A0%85/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  既知の制限事項
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="主翼設計解析プログラム 学習ドキュメント" class="md-nav__button md-logo" aria-label="主翼設計解析プログラム 学習ドキュメント" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    主翼設計解析プログラム 学習ドキュメント
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00_%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_%E5%85%A8%E4%BD%93%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    全体アーキテクチャ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    空力理論編
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    空力理論編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-揚力線理論の基本アイデア" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 揚力線理論の基本アイデア
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-循環のフーリエ級数展開とコサイン変数変換" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 循環のフーリエ級数展開とコサイン変数変換
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-モノプレーン方程式フーリエ係数の連立方程式" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. モノプレーン方程式(フーリエ係数の連立方程式)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-揚力係数誘導抗力スパン効率" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 揚力係数・誘導抗力・スパン効率
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-誘導迎角有効迎角揚力分布の復元" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 誘導迎角・有効迎角・揚力分布の復元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-プロファイル抗力モーメント係数2次元翼型データの利用" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. プロファイル抗力・モーメント係数(2次元翼型データの利用)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-空力中心区分重心とピッチングモーメント" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 空力中心・区分重心とピッチングモーメント
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-飛行速度のつり合いトリム反復" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 飛行速度のつり合い(トリム)反復
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#次に読むもの" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        次に読むもの
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    空力実装編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_%E6%A7%8B%E9%80%A0%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造理論編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_%E6%A7%8B%E9%80%A0%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造実装編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07_%E6%97%A2%E7%9F%A5%E3%81%AE%E5%88%B6%E9%99%90%E4%BA%8B%E9%A0%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    既知の制限事項
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-揚力線理論の基本アイデア" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 揚力線理論の基本アイデア
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-循環のフーリエ級数展開とコサイン変数変換" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 循環のフーリエ級数展開とコサイン変数変換
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-モノプレーン方程式フーリエ係数の連立方程式" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. モノプレーン方程式(フーリエ係数の連立方程式)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-揚力係数誘導抗力スパン効率" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 揚力係数・誘導抗力・スパン効率
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-誘導迎角有効迎角揚力分布の復元" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. 誘導迎角・有効迎角・揚力分布の復元
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-プロファイル抗力モーメント係数2次元翼型データの利用" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. プロファイル抗力・モーメント係数(2次元翼型データの利用)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-空力中心区分重心とピッチングモーメント" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. 空力中心・区分重心とピッチングモーメント
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-飛行速度のつり合いトリム反復" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 飛行速度のつり合い(トリム)反復
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#次に読むもの" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        次に読むもの
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="空力理論編--揚力線理論prandtl-glauert法">空力理論編 — 揚力線理論(Prandtl-Glauert法)<a class="headerlink" href="#空力理論編--揚力線理論prandtl-glauert法" title="Permanent link">&para;</a></h1>
+<p>このプログラムの空力解析は、<strong>Prandtlの揚力線理論</strong>を<strong>Glauertのフーリエ級数法</strong>で数値的に解く、という古典的な手法に基づいています。翼型理論(2次元)と有限翼理論(3次元)の橋渡しとなる理論です。大学の航空力学基礎(2次元翼理論、揚力係数Clと迎角の関係など)は既知として、ここでは<strong>このプログラムが実際に何を仮定し、何を解いているか</strong>に絞って説明します。</p>
+<h2 id="1-揚力線理論の基本アイデア">1. 揚力線理論の基本アイデア<a class="headerlink" href="#1-揚力線理論の基本アイデア" title="Permanent link">&para;</a></h2>
+<p>有限翼(実際の主翼のように、有限のスパンを持つ翼)は、翼端で圧力差が解消されるため、翼端から後方へ<strong>翼端渦(トレーリングボルテックス)</strong> が流れ出します。この渦のシートが翼の後方に作る誘導速度(下向きの流れ、<strong>吹き下ろし</strong>)が、翼の各断面が「実際に感じる」流入角を変えてしまいます。</p>
+<p>これにより、各スパン位置での<strong>有効迎角</strong>は、機体全体の姿勢から決まる<strong>幾何迎角</strong>より小さくなります。</p>
+<div class="highlight"><pre><span></span><code>有効迎角 = 幾何迎角 − 誘導迎角
+</code></pre></div>
+<ul>
+<li>幾何迎角: 主翼の取付角+ねじり下げ角で決まる、その断面が「向いている」角度</li>
+<li>誘導迎角: 吹き下ろしによって流入角が下向きに傾く分。吹き下ろしが強いほど大きい</li>
+</ul>
+<p>局所揚力係数は、有効迎角を使って2次元翼型と同じ関係式(Cl = a₀×(α_eff − α_L0))で決まります。ここでa₀(2次元揚力傾斜)やα_L0(ゼロ揚力角)は、Reynolds数に応じて変化する翼型固有のデータで、実験・解析結果をテーブル化したものを参照します(§6)。</p>
+<p>問題は、「吹き下ろしの強さ」自体が「揚力分布(＝循環分布)」に依存し、その揚力分布は「有効迎角」に依存し、有効迎角は「吹き下ろし」に依存する、という<strong>循環参照</strong>になっていることです。これを解くのが揚力線理論の核心です。</p>
+<h2 id="2-循環のフーリエ級数展開とコサイン変数変換">2. 循環のフーリエ級数展開とコサイン変数変換<a class="headerlink" href="#2-循環のフーリエ級数展開とコサイン変数変換" title="Permanent link">&para;</a></h2>
+<p>Prandtlの理論では、スパン方向の循環分布Γ(y)を、変数変換 <code>y = -(b/2)cos(θ)</code> (θ: 0〜π、bはスパン)を使ってθの関数として、次のフーリエ正弦級数で表します。</p>
+<div class="highlight"><pre><span></span><code>Γ(θ) = 2bV Σ Aₙ sin(nθ)      (n = 1, 2, 3, ...)
+</code></pre></div>
+<p>この変数変換を使うと、翼根(y=0)がθ=π/2、両翼端(y=±b/2)がθ=0, πに対応します。<strong>θを等間隔に刻むと、対応するy座標は翼端付近ほど密に、翼根付近ほど粗く</strong>なります(コサイン分布)。翼端付近は循環の変化が急なので、この配置は数値精度上有利です。</p>
+<p><strong>左右対称の翼</strong>(このプログラムが前提とする、左右同じ形状の主翼)では、循環分布も左右対称になります。フーリエ級数で左右対称な分布を表すには、<strong>奇数次の項(n=1,3,5,...)だけで十分</strong>です(偶数次の項は反対称な分布に対応するため、左右対称な荷重では係数がゼロになる)。このプログラムが求めるのは奇数次の係数Aₙだけで、これによって未知数の数を半分に減らしています。</p>
+<h2 id="3-モノプレーン方程式フーリエ係数の連立方程式">3. モノプレーン方程式(フーリエ係数の連立方程式)<a class="headerlink" href="#3-モノプレーン方程式フーリエ係数の連立方程式" title="Permanent link">&para;</a></h2>
+<p>各スパン位置(θ)で「局所揚力係数を2つの異なる方法で表した式が一致する」という条件を立てると、次の積分方程式(<strong>モノプレーン方程式</strong>、Glauertの方程式とも呼ばれる)が得られます。</p>
+<div class="highlight"><pre><span></span><code>μ(θ)[α(θ) − α_L0(θ)] = Σ Aₙ sin(nθ) [ n·μ(θ)/sin(θ) + 1 ]
+</code></pre></div>
+<p>ここで <code>μ(θ) = c(θ)·a₀(θ) / (4b)</code> は、局所翼弦・局所揚力傾斜・スパンから決まる無次元パラメータです。</p>
+<p>これを、θ軸上のK個の制御点(コサイン分布グリッドの片側半分、翼根〜翼端)で満たすように要求すると、未知数A₁,A₃,...,A_{2K-1}(K個)に対するK元の連立一次方程式になります。行列で書けば</p>
+<div class="highlight"><pre><span></span><code>A・B = C     (A: K×K行列、B: 未知のフーリエ係数ベクトル、C: 既知ベクトル)
+</code></pre></div>
+<p>の形になり、逆行列を使ってB = A⁻¹Cとして解けます。この行列を解く部分が、このプログラムの空力解析の<strong>核心の計算</strong>です(実装は<code>03_空力実装編.md</code>§2)。</p>
+<h2 id="4-揚力係数誘導抗力スパン効率">4. 揚力係数・誘導抗力・スパン効率<a class="headerlink" href="#4-揚力係数誘導抗力スパン効率" title="Permanent link">&para;</a></h2>
+<p>フーリエ係数が求まると、翼全体の揚力係数と誘導抗力係数が、A₁と高次項の比だけから直接求まります。</p>
+<div class="highlight"><pre><span></span><code>CL = π・AR・A₁
+CDi = CL² (1+δ) / (π・AR)
+</code></pre></div>
+<p><code>δ</code>(デルタ)は高次のフーリエ項(A₃, A₅, ...)がA₁に対してどれだけ大きいかを表す量で、<strong>理想的な楕円分布(δ=0)からのズレ</strong>を意味します。δが大きいほど、同じCLを出すのに必要な誘導抗力が大きくなり、非効率な翼になります。</p>
+<p><strong>スパン効率e</strong>は<code>e = 1/(1+δ)</code>で定義され、e=1が理想の楕円分布(最小誘導抗力)です。</p>
+<h2 id="5-誘導迎角有効迎角揚力分布の復元">5. 誘導迎角・有効迎角・揚力分布の復元<a class="headerlink" href="#5-誘導迎角有効迎角揚力分布の復元" title="Permanent link">&para;</a></h2>
+<p>フーリエ係数Bₙが求まれば、<strong>制御点だけでなく翼全体の任意のスパン位置</strong>で、吹き下ろし速度・誘導迎角・局所揚力係数を計算し直せます。</p>
+<div class="highlight"><pre><span></span><code>w(θ)/V = Σ n·Aₙ sin(nθ)/sin(θ)          (吹き下ろし速度の無次元化)
+α_i(θ) = w(θ)/V                          (誘導迎角、ラジアン)
+Cl(θ)  = a₀(θ)・[α(θ) − α_L0(θ) − α_i(θ)]  (局所揚力係数)
+</code></pre></div>
+<p>局所揚力係数に動圧と局所翼弦(に相当する面積分担)をかければ、スパン方向の<strong>揚力分布</strong>(局所ごとの揚力の大きさ)が得られます。</p>
+<h2 id="6-プロファイル抗力モーメント係数2次元翼型データの利用">6. プロファイル抗力・モーメント係数(2次元翼型データの利用)<a class="headerlink" href="#6-プロファイル抗力モーメント係数2次元翼型データの利用" title="Permanent link">&para;</a></h2>
+<p>揚力線理論そのものは、翼型の<strong>厚みや形状による摩擦・圧力抗力(プロファイル抗力)</strong> や<strong>空力モーメント</strong>を直接は計算しません。これらは、各スパン位置の<strong>有効迎角</strong>と<strong>局所Reynolds数</strong>(局所翼弦・飛行速度・動粘性係数から決まる)を使って、あらかじめ用意した2次元翼型の実験・解析データ(CFDや風洞試験由来のCd-α、Cm-α特性)をテーブル参照して求めます。</p>
+<p>主翼が翼根から翼端にかけて複数の翼型を使い分けている場合(このプログラムでは各スパン位置で最大2種類の翼型を線形補間でブレンドする)、その2つの翼型のCd/Cmを個別にテーブル参照し、ブレンド比で加重平均します。</p>
+<p>全機の抗力係数は、誘導抗力(§4)とプロファイル抗力(このテーブル参照分)の和です。</p>
+<h2 id="7-空力中心区分重心とピッチングモーメント">7. 空力中心・区分重心とピッチングモーメント<a class="headerlink" href="#7-空力中心区分重心とピッチングモーメント" title="Permanent link">&para;</a></h2>
+<p>局所的な<strong>空力中心位置Cp</strong>(翼弦に対する割合)は、局所揚力係数と局所モーメント係数の関係(モーメント基準点を1/4翼弦に取る慣例のもとで<code>Cp = 0.25 − Cm/Cl</code>)から逆算できます。</p>
+<p>主翼全体のピッチングモーメント(縦揺れモーメント)は、各スパン位置の揚力が桁位置(構造上の基準点、空力中心とは別)からどれだけズレた位置に作用しているか(モーメントアーム)を積算して求めます。この値は、主翼が縦の釣り合い(トリム)にどう寄与するかを見るのに使われます。</p>
+<h2 id="8-飛行速度のつり合いトリム反復">8. 飛行速度のつり合い(トリム)反復<a class="headerlink" href="#8-飛行速度のつり合いトリム反復" title="Permanent link">&para;</a></h2>
+<p>人力飛行機は、機体重量(構造重量+パイロット体重)と揚力がちょうど釣り合う速度で水平飛行します。しかし揚力係数CLはこの理論では「ある飛行速度Vでの値」としてしか求まらないため、</p>
+<ol>
+<li>適当な初期飛行速度V₁を仮定して揚力線理論を解く</li>
+<li>得られた総揚力(重量換算)と実際の機体重量を比較する</li>
+<li>一致していなければ、揚力係数を保ったまま釣り合うように飛行速度を更新する(<code>V ∝ 1/√CL</code>の関係を使う)</li>
+<li>収束するまで1〜3を繰り返す</li>
+</ol>
+<p>という反復(トリムループ)を行っています。この反復も含めて「揚力線理論を解く」という1つの関数にまとまっているのが、このプログラムの構成上の特徴です(実装は<code>03_空力実装編.md</code>§6)。</p>
+<h2 id="次に読むもの">次に読むもの<a class="headerlink" href="#次に読むもの" title="Permanent link">&para;</a></h2>
+<p>これらの理論が実際のVBAコード(<code>Mod03</code>〜<code>Mod09</code>)のどこにどう対応しているかは、<code>03_空力実装編.md</code>で説明します。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "navigation.instant", "search.suggest", "content.code.copy", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>

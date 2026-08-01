@@ -1,0 +1,1048 @@
+
+<!doctype html>
+<html lang="ja" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="人力飛行機の主翼設計解析プログラム(MATLAB→Excel VBA移植版)の仕組みを解説する学習ドキュメント">
+      
+      
+        <meta name="author" content="WidMillClub">
+      
+      
+      
+        <link rel="prev" href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/">
+      
+      
+        <link rel="next" href="../05_%E6%A7%8B%E9%80%A0%E5%AE%9F%E8%A3%85%E7%B7%A8/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>構造理論編 - 主翼設計解析プログラム 学習ドキュメント</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#構造理論編--積層理論と3d梁fem" class="md-skip">
+          コンテンツにスキップ
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="ヘッダー">
+    <a href=".." title="主翼設計解析プログラム 学習ドキュメント" class="md-header__button md-logo" aria-label="主翼設計解析プログラム 学習ドキュメント" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            主翼設計解析プログラム 学習ドキュメント
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              構造理論編
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ダークモードに切り替え"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="ダークモードに切り替え" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="ライトモードに切り替え"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="ライトモードに切り替え" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="検索" placeholder="検索" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="検索">
+        
+        <button type="reset" class="md-search__icon md-icon" title="クリア" aria-label="クリア" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            検索を初期化
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="タブ" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../00_%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  はじめに
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../01_%E5%85%A8%E4%BD%93%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  全体アーキテクチャ
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../02_%E7%A9%BA%E5%8A%9B%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  空力理論編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  空力実装編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+    
+  
+  
+    <li class="md-tabs__item md-tabs__item--active">
+      <a href="./" class="md-tabs__link">
+        
+  
+  
+    
+  
+  構造理論編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../05_%E6%A7%8B%E9%80%A0%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  構造実装編
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  用語集
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../07_%E6%97%A2%E7%9F%A5%E3%81%AE%E5%88%B6%E9%99%90%E4%BA%8B%E9%A0%85/" class="md-tabs__link">
+        
+  
+  
+    
+  
+  既知の制限事項
+
+      </a>
+    </li>
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="ナビゲーション" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="主翼設計解析プログラム 学習ドキュメント" class="md-nav__button md-logo" aria-label="主翼設計解析プログラム 学習ドキュメント" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    主翼設計解析プログラム 学習ドキュメント
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../00_%E3%81%AF%E3%81%98%E3%82%81%E3%81%AB/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    はじめに
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../01_%E5%85%A8%E4%BD%93%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    全体アーキテクチャ
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_%E7%A9%BA%E5%8A%9B%E7%90%86%E8%AB%96%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    空力理論編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_%E7%A9%BA%E5%8A%9B%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    空力実装編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造理論編
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造理論編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-桁の構造モデル化片持ち梁としての桁" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 桁の構造モデル化(片持ち梁としての桁)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-古典積層理論cltの基礎--材料主軸のq行列とその角度変換" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 古典積層理論(CLT)の基礎 — 材料主軸のQ行列とその角度変換
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-面内剛性a行列と等価exgxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 面内剛性(A行列)と等価Ex/Gxy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-円環断面の曲げ剛性eiyeizと曲げ-ねじり連成q16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 円環断面の曲げ剛性EIy/EIzと曲げ-ねじり連成Q16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-ud補強の扇形断面二次モーメント" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. UD補強の扇形断面二次モーメント
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-3d梁要素の剛性行列6自由度節点" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 3D梁要素の剛性行列(6自由度/節点)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ブロック三重対角のthomas法" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. ブロック三重対角のThomas法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-断面内の応力分布とtsai-wu複合則" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 断面内の応力分布とTsai-Wu複合則
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-座屈に対する安全率4方式" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. 座屈に対する安全率(4方式)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#次に読むもの" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        次に読むもの
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_%E6%A7%8B%E9%80%A0%E5%AE%9F%E8%A3%85%E7%B7%A8/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    構造実装編
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06_%E7%94%A8%E8%AA%9E%E9%9B%86/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    用語集
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07_%E6%97%A2%E7%9F%A5%E3%81%AE%E5%88%B6%E9%99%90%E4%BA%8B%E9%A0%85/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    既知の制限事項
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="目次">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      目次
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#1-桁の構造モデル化片持ち梁としての桁" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        1. 桁の構造モデル化(片持ち梁としての桁)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2-古典積層理論cltの基礎--材料主軸のq行列とその角度変換" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        2. 古典積層理論(CLT)の基礎 — 材料主軸のQ行列とその角度変換
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#3-面内剛性a行列と等価exgxy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        3. 面内剛性(A行列)と等価Ex/Gxy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#4-円環断面の曲げ剛性eiyeizと曲げ-ねじり連成q16" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        4. 円環断面の曲げ剛性EIy/EIzと曲げ-ねじり連成Q16
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#5-ud補強の扇形断面二次モーメント" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        5. UD補強の扇形断面二次モーメント
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#6-3d梁要素の剛性行列6自由度節点" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        6. 3D梁要素の剛性行列(6自由度/節点)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#7-ブロック三重対角のthomas法" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        7. ブロック三重対角のThomas法
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#8-断面内の応力分布とtsai-wu複合則" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        8. 断面内の応力分布とTsai-Wu複合則
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#9-座屈に対する安全率4方式" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        9. 座屈に対する安全率(4方式)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#次に読むもの" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        次に読むもの
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="構造理論編--積層理論と3d梁fem">構造理論編 — 積層理論と3D梁FEM<a class="headerlink" href="#構造理論編--積層理論と3d梁fem" title="Permanent link">&para;</a></h1>
+<p>主翼の桁(スパー)は、炭素繊維プリプレグを円管状に巻いた「パイプ」を基本構造とし、必要に応じて一方向繊維(UD)テープで局所的に補強した複合材構造です。この桁が、空力解析で求めた分布荷重(揚力・抗力・ねじりモーメント)を受けたときに、どれだけたわみ・ねじれ、どこにどれだけの応力がかかり、いつ壊れるか(強度・座屈)を求めるのが構造解析の役割です。</p>
+<p>大学の材料力学基礎(応力・ひずみ、曲げ・せん断、有限要素法の考え方)は既知として、ここでは<strong>複合材(積層板)固有の理論</strong>と、<strong>このプログラムが桁をどうモデル化しているか</strong>に説明を絞ります。</p>
+<h2 id="1-桁の構造モデル化片持ち梁としての桁">1. 桁の構造モデル化(片持ち梁としての桁)<a class="headerlink" href="#1-桁の構造モデル化片持ち梁としての桁" title="Permanent link">&para;</a></h2>
+<p>桁は「翼根で機体に固定され、翼端まで伸びる1本の梁」として扱います。翼根(付け根)を完全固定(変位・回転すべて0)、翼端まで自由、という<strong>片持ち梁</strong>です。梁を軸方向に等間隔の要素(デフォルト500分割)に区切り、各要素の両端(節点)の変位・回転を未知数とする<strong>有限要素法(FEM)</strong> で解きます。</p>
+<p>桁は等方性材料(金属など)ではなく、繊維方向を変えて何層も積み重ねた<strong>積層複合材</strong>でできているため、通常の材料力学の教科書に出てくる「EI」(曲げ剛性)を単純な公式では求められません。ここで<strong>古典積層理論(Classical Laminate Theory, CLT)</strong> が必要になります。</p>
+<h2 id="2-古典積層理論cltの基礎--材料主軸のq行列とその角度変換">2. 古典積層理論(CLT)の基礎 — 材料主軸のQ行列とその角度変換<a class="headerlink" href="#2-古典積層理論cltの基礎--材料主軸のq行列とその角度変換" title="Permanent link">&para;</a></h2>
+<p>繊維複合材の1層(プライ)は、繊維方向(1軸)と直角方向(2軸)で剛性が大きく異なる<strong>異方性材料</strong>です。この1層の応力-ひずみ関係を表す剛性行列を、繊維方向を基準にした座標系で書いたものが<strong>Q行列</strong>(縮約剛性マトリックス)です。</p>
+<div class="highlight"><pre><span></span><code>Q11 = Ex / (1 - νxy・νyx)
+Q22 = Ey / (1 - νxy・νyx)
+Q12 = νxy・Q22
+Q66 = Gxy
+</code></pre></div>
+<p>(Ex, Ey: 繊維方向・直角方向のヤング率、νxy: ポアソン比、Gxy: せん断弾性率)</p>
+<p>桁は円管状に、層ごとに<strong>異なる角度</strong>(例: 0°, ±45°, 90°など)で繊維を巻いているため、各層のQ行列を、その層の繊維角度θだけ<strong>座標変換</strong>する必要があります。この変換を、Q11・Q22・Q12・Q66の4つの独立成分の代わりに<strong>5つの材料不変量U1〜U5</strong>(角度に依存しない量)で表すと、変換後の行列(Q̄、Qバー)は次のように書けます。</p>
+<div class="highlight"><pre><span></span><code>Q̄11(θ) = U1 + U2・cos2θ + U3・cos4θ
+Q̄22(θ) = U1 − U2・cos2θ + U3・cos4θ
+Q̄12(θ) = U4 − U3・cos4θ
+Q̄66(θ) = U5 − U3・cos4θ
+Q̄16(θ) = (U2/2)・sin2θ + U3・sin4θ
+Q̄26(θ) = (U2/2)・sin2θ − U3・sin4θ
+</code></pre></div>
+<p><strong>Q̄16・Q̄26</strong>が、繊維角度が0°/90°以外のときに現れる項で、「面内の引張と面内せん断が連成する」ことを意味します。桁の場合、この連成が<strong>曲げとねじりの連成</strong>(理論編§4のQ16)として現れる、複合材特有の重要な性質です。</p>
+<h2 id="3-面内剛性a行列と等価exgxy">3. 面内剛性(A行列)と等価Ex/Gxy<a class="headerlink" href="#3-面内剛性a行列と等価exgxy" title="Permanent link">&para;</a></h2>
+<p>積層板全体としての「等価な」ヤング率・せん断弾性率は、各層のQ̄行列を<strong>厚み比で重み付き平均</strong>した面内剛性行列(A行列、A11, A12, A16, A22, A26, A66)から求めます。</p>
+<div class="highlight"><pre><span></span><code>Aij = Σ (層kの厚み比) × Q̄ij(層kの角度)
+</code></pre></div>
+<p>このA行列の逆行列成分から、積層板全体の等価な軸剛性(Ex_eff)・面内せん断剛性(Gxy_eff)を求められます。この等価値は、後述のUD補強の等価物性(座屈評価で使う)や、パイプの軸剛性EA(=Ex_eff×断面積)に使われます。</p>
+<h2 id="4-円環断面の曲げ剛性eiyeizと曲げ-ねじり連成q16">4. 円環断面の曲げ剛性EIy/EIzと曲げ-ねじり連成Q16<a class="headerlink" href="#4-円環断面の曲げ剛性eiyeizと曲げ-ねじり連成q16" title="Permanent link">&para;</a></h2>
+<p>桁は<strong>円管(パイプ)断面</strong>なので、曲げ剛性EIyは「板の曲げ剛性を円周方向に積分する」ことで求められます。各層の半径方向の境界(内側z、外側z)がわかれば、</p>
+<div class="highlight"><pre><span></span><code>EIy = Σ (2/3・Q̄11(層k)) × (z_外^4 − z_内^4)
+</code></pre></div>
+<p>という円環の直接積分公式になります(円形断面なので対称性からEIz=EIyです)。同様に、Q̄16を同じ境界で積分すると、<strong>曲げ-ねじり連成剛性Q16</strong>(桁を曲げたときにねじれが生じる、あるいはねじったときに曲げが生じる度合い)が求まります。これは金属材の梁には存在しない、複合材特有の項です。</p>
+<p>これが、このプログラムで実際に使われている剛性算出方式(元のMATLABコード内では複数の計算方式が用意されていますが、実際に使われているのはこの円環積分方式だけです)。</p>
+<h2 id="5-ud補強の扇形断面二次モーメント">5. UD補強の扇形断面二次モーメント<a class="headerlink" href="#5-ud補強の扇形断面二次モーメント" title="Permanent link">&para;</a></h2>
+<p>パイプの局所的な強度・剛性を上げるため、パイプの外周の一部(円周角にして一定の範囲)だけに一方向繊維(UD)テープを追加で巻く設計になっています。UD部分は円周全体を覆わない<strong>扇形(円弧状)の断面</strong>なので、断面二次モーメントIy/Izは、単純な円環の公式ではなく、<strong>開き角(幅/半径から決まる弧の角度)を使った扇形断面の積分公式</strong>で計算します。UD自体の剛性(EIyへの寄与)は、この扇形断面の二次モーメントに、UD材料のヤング率を掛けて求めます。</p>
+<h2 id="6-3d梁要素の剛性行列6自由度節点">6. 3D梁要素の剛性行列(6自由度/節点)<a class="headerlink" href="#6-3d梁要素の剛性行列6自由度節点" title="Permanent link">&para;</a></h2>
+<p>各節点は6つの自由度(軸方向変位u、揚力方向たわみv、抗力方向たわみw、ねじれ角θx、曲げ角θy、θz)を持ちます。1つの要素(隣り合う2節点)の剛性行列は、通常「12×12行列」として書かれますが、このプログラムでは<strong>6×6のブロック4つ</strong>(節点iから見た自分自身への影響b1、隣の節点への影響b2、隣の節点から見た自分への影響b3、隣の節点自身への影響b4)として組み立てます。</p>
+<p>剛性の内訳は次の通りです。</p>
+<ul>
+<li>軸力(u)は軸剛性EA</li>
+<li>v(揚力方向たわみ)-θz(その回転)平面の曲げは<strong>EIy</strong></li>
+<li>w(抗力方向たわみ)-θy(その回転)平面の曲げは<strong>EIz</strong></li>
+<li>ねじれ(θx)はねじり剛性GK</li>
+<li><strong>v/w平面の曲げとθx(ねじれ)は、§4のQ16を通じて連成</strong>する(通常の等方性梁の剛性行列には存在しない項)</li>
+</ul>
+<h2 id="7-ブロック三重対角のthomas法">7. ブロック三重対角のThomas法<a class="headerlink" href="#7-ブロック三重対角のthomas法" title="Permanent link">&para;</a></h2>
+<p>500要素(節点501個、自由度6×501=3006個)の連立方程式を、密な行列のまま逆行列計算で解くのは非効率です。梁の要素は「隣同士の節点しかつながらない」という構造(三重対角)を持つため、<strong>Thomas法</strong>(3重対角の連立方程式を、密な逆行列を作らず前進消去・後退代入だけで解くアルゴリズム)が使えます。</p>
+<p>通常のThomas法はスカラー(1変数)の三重対角行列に使いますが、ここでは1節点に6自由度あるため、スカラーの代わりに<strong>6×6の行列ブロック</strong>を単位として同じ手順(前進消去・後退代入)を行う<strong>ブロック三重対角のThomas法</strong>を使います。これにより、3006×3006の密行列を一度も作らず、6×6の小さな行列演算(逆行列・積)を要素数程度の回数繰り返すだけで解が求まります。</p>
+<h2 id="8-断面内の応力分布とtsai-wu複合則">8. 断面内の応力分布とTsai-Wu複合則<a class="headerlink" href="#8-断面内の応力分布とtsai-wu複合則" title="Permanent link">&para;</a></h2>
+<p>FEMで各要素の変位・断面内力(軸力・せん断力・曲げモーメント・ねじりモーメント)が求まると、断面周方向の複数の点(パイプは0°/90°/180°/270°の4点、UDは0°/180°の2点)で、その点の応力を計算できます。梁理論の応力・ひずみの式と、§2のQ̄行列を組み合わせて、各層(プライ)の<strong>材料主軸方向の応力</strong>(繊維方向・直角方向・面内せん断)を求めます。</p>
+<p>複合材の破壊は、繊維方向の引張・圧縮、直角方向の引張・圧縮、面内せん断がそれぞれ異なる強度を持ち、かつ<strong>組み合わせ(相互作用)</strong> によって早く壊れることがあるため、単純な最大応力説では不十分です。このプログラムでは<strong>Tsai-Wu複合則</strong>(2次の相互作用項を含む複合破壊基準)を使い、「現在の荷重を何倍まで大きくしたら破壊するか」という<strong>強度比R</strong>を、次の2次方程式を解いて求めます。</p>
+<div class="highlight"><pre><span></span><code>F11σ1² + 2F12σ1σ2 + F22σ2² + F66σ6² + F1σ1 + F2σ2 = 1/R²  (Rについて解く)
+</code></pre></div>
+<p>(F11, F22, F66, F1, F2は強度allowable(stx, stxd, sty, styd, sts)から決まる係数、F12は近似的にF11・F22から求める)</p>
+<p>1要素につき、断面周方向×各層の全組み合わせのうち<strong>最小の強度比</strong>(=最も先に壊れる箇所)を、その要素の代表値として採用します。</p>
+<h2 id="9-座屈に対する安全率4方式">9. 座屈に対する安全率(4方式)<a class="headerlink" href="#9-座屈に対する安全率4方式" title="Permanent link">&para;</a></h2>
+<p>薄肉円筒(パイプ)は、強度上は壊れなくても、曲げ荷重によって局所的に「座屈」(断面が潰れるような不安定変形)を起こすことがあります。座屈が起きる限界応力(座屈応力)は、円筒の半径・板厚・材料剛性から古典的な円筒座屈の式で概算できます。</p>
+<div class="highlight"><pre><span></span><code>座屈応力 ∝ √(Ex・Ey) / (1 − νxy²・Ey/Ex) × (板厚 / 直径)
+</code></pre></div>
+<p>このプログラムでは、<strong>どの材料物性を使うか</strong>(パイプ最外層1枚だけの実物性 vs 積層全体の等価物性、§3のA行列由来)と、<strong>どの厚みを使うか</strong>(パイプだけ vs パイプ+UD補強)の組み合わせで<strong>4通り</strong>の座屈応力を計算し、それぞれを実際にかかる最大曲げ応力で割って安全率としています。どの方式が最も現実に近いかは設計判断の範疇であるため、4方式すべてを並べて出力する構成になっています。</p>
+<h2 id="次に読むもの">次に読むもの<a class="headerlink" href="#次に読むもの" title="Permanent link">&para;</a></h2>
+<p>これらの理論が実際のVBAコード(<code>Mod10</code>〜<code>Mod18</code>)のどこにどう対応しているかは、<code>05_構造実装編.md</code>で説明します。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  ページトップへ戻る
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.tabs", "navigation.top", "navigation.instant", "search.suggest", "content.code.copy", "toc.follow"], "search": "../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "\u30b3\u30d4\u30fc\u3057\u307e\u3057\u305f", "clipboard.copy": "\u30af\u30ea\u30c3\u30d7\u30dc\u30fc\u30c9\u3078\u30b3\u30d4\u30fc", "search.result.more.one": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3082\u30461\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.more.other": "\u3053\u306e\u30da\u30fc\u30b8\u5185\u306b\u3042\u3068#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.none": "\u4f55\u3082\u898b\u3064\u304b\u308a\u307e\u305b\u3093\u3067\u3057\u305f", "search.result.one": "1\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.other": "#\u4ef6\u898b\u3064\u304b\u308a\u307e\u3057\u305f", "search.result.placeholder": "\u691c\u7d22\u30ad\u30fc\u30ef\u30fc\u30c9\u3092\u5165\u529b\u3057\u3066\u304f\u3060\u3055\u3044", "search.result.term.missing": "\u691c\u7d22\u306b\u542b\u307e\u308c\u306a\u3044", "select.version": "\u30d0\u30fc\u30b8\u30e7\u30f3\u5207\u308a\u66ff\u3048"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
