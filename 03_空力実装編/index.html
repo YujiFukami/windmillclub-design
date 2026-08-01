@@ -904,6 +904,7 @@
 <blockquote>
 <p>💻 対応コード: <code>clsWingGeometry.cls</code> の <code>Build</code></p>
 </blockquote>
+<p>(コサイン分布グリッドがどう見えるかの図は<code>02_空力理論編.md</code>§2を参照)</p>
 <p>「パラメータ_翼」シートの4つの点列(平面系・ねじり下げ分布・桁位置・翼型分布)は、Y座標が不揃いの疎な点列です。<code>Build</code>は、これを理論編§2で説明したコサイン変数変換</p>
 <div class="highlight"><pre><span></span><code>m_Th(i) = pi * (i - 1) / n
 m_Y(i)  = -BSpan / 2 * Cos(m_Th(i))

@@ -947,7 +947,7 @@
 q11(j) = u1 + u2 * Cos(2 * t) + u3 * Cos(4 * t)
 q16(j) = u2 * 0.5 * Sin(2 * t) + u3 * Sin(4 * t)
 </code></pre></div>
-<p>にそのまま対応します(変数名は<code>u1</code>〜<code>u5</code>、<code>q11</code>〜<code>q66</code>と理論編の記号を踏襲しています)。理論編§3のA行列(厚み比重み付き平均)は、</p>
+<p>にそのまま対応します(変数名は<code>u1</code>〜<code>u5</code>、<code>q11</code>〜<code>q66</code>と理論編の記号を踏襲しています。Q̄が繊維角度でどう変化するかの図は<code>04_構造理論編.md</code>§2、円環断面の層境界による積分イメージは同§4を参照)。理論編§3のA行列(厚み比重み付き平均)は、</p>
 <div class="highlight"><pre><span></span><code>Dim w As Double: w = thickMm(j) / ehMm
 a11 = a11 + w * q11(j)
 </code></pre></div>
@@ -1004,7 +1004,7 @@ Xsol(ip) = MMult(MInverse(Dp(ip)), rhs)
 <blockquote>
 <p>💻 対応コード: <code>Mod17_桁強度座屈.bas</code></p>
 </blockquote>
-<p>理論編§8のTsai-Wu複合則は<code>TsaiWuRatio</code>(2次方程式<code>a・R²+b・R=1</code>を解く部分)、材料主軸への応力回転は<code>RotateToMaterialAxes</code>が担当します。<code>EvaluateSparStrength</code>本体では、FEMで求めた断面内力・変位差(ひずみ)から、断面周方向の各点・各層の応力を計算し、</p>
+<p>理論編§8のTsai-Wu複合則は<code>TsaiWuRatio</code>(2次方程式<code>a・R²+b・R=1</code>を解く部分)、材料主軸への応力回転は<code>RotateToMaterialAxes</code>が担当します。<code>EvaluateSparStrength</code>本体では、FEMで求めた断面内力・変位差(ひずみ)から、断面周方向の各点・各層の応力を計算し、(周方向の評価点位置・破壊包絡線の図は<code>04_構造理論編.md</code>§8を参照)</p>
 <div class="highlight"><pre><span></span><code>ratio = TsaiWuRatio(sigmaX, sigmaY, sigmaS, stx(j), stxd(j), sty(j), styd(j), sts(j))
 If ratio &lt; minRatioPipe Then minRatioPipe = ratio
 </code></pre></div>
