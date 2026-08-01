@@ -840,48 +840,31 @@
 </ol>
 <p>「空力側で求めた荷重が、構造側の入力になる」という一方向の依存関係があるだけで、逆(構造側の変形が空力に影響する、いわゆる流体構造連成)は扱っていません。</p>
 <h2 id="全体の流れデータフロー">全体の流れ(データフロー)<a class="headerlink" href="#全体の流れデータフロー" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code>[パラメータ_翼 等シート]              [パラメータ_桁 等シート]
-        │  Mod01_情報取得_翼                    │  Mod02_情報取得_桁
-        ▼                                        ▼
-  clsWingGeometry.Build              桁の積層・UD・マンドレル径データ
-  (コサイン分布グリッド、               (可変長のラゲッド配列)
-   1000点=デフォルト)
-        │
-        ▼
-  Mod05_空力ソルバー.SolveAero  ← Mod04_翼型データベース(Cl/Cd/Cm特性)
-  (揚力線理論、V1収束ループ)
-        │
-        ▼
-   clsAeroResult
-  (スパン方向のCl_dist/CdDisJohen/CmDisJohen等、コサイン分布グリッド)
-        │
-        │  ここでグリッドが「コサイン分布」→「等間隔」に切り替わる
-        │  (Mod15_桁荷重のスプライン補間が橋渡しする)
-        ▼
-  Mod13_桁断面剛性実行.BuildSparSectionsWithSpan
-  (等間隔グリッド、element=500=デフォルト)
-        │
-        ▼
-   clsSparSection (EA/GK/EIy/EIz等、断面ごとの剛性)
-        │
-        ▼
-  Mod15_桁荷重.BuildSparForceVector
-  (空力荷重をスプラインで等間隔グリッドへ転写 + 桁自重)
-        │
-        ▼
-  Mod16_桁FEM.SolveSparFEM
-  (3D梁FEM、ブロック三重対角Thomas法)
-        │
-        ▼
-   clsSparDeformation (Ux/Uy/Uz/THx/THy/THz、BMD/SFD、断面内力)
-        │
-        ▼
-  Mod17_桁強度座屈.EvaluateSparStrength
-  (Tsai-Wu複合則、座屈安全率×4方式)
-        │
-        ▼
-   clsSparStrength (TsaiWuPipe/TsaiWuUD、Buckling1〜4)
-</code></pre></div>
+<pre class="mermaid"><code>flowchart TD
+    subgraph AERO["空力解析"]
+        A1["パラメータ_翼 等シート"] --&gt;|"Mod01_情報取得_翼"| B1["clsWingGeometry.Build&lt;br/&gt;(コサイン分布グリッド, 1000点)"]
+        DB["Mod04_翼型データベース&lt;br/&gt;(Cl/Cd/Cm特性)"]
+        B1 --&gt; C["Mod05_空力ソルバー.SolveAero&lt;br/&gt;(揚力線理論, V1収束ループ)"]
+        DB -.-&gt; C
+        C --&gt; E["clsAeroResult&lt;br/&gt;(Cl_dist / CdDisJohen / CmDisJohen 等)&lt;br/&gt;コサイン分布グリッド"]
+    end
+
+    subgraph STRUCT["構造解析"]
+        A2["パラメータ_桁 等シート"] --&gt;|"Mod02_情報取得_桁"| B2["桁の積層・UD・マンドレル径データ&lt;br/&gt;(可変長ラゲッド配列)"]
+        F["Mod13_桁断面剛性実行&lt;br/&gt;.BuildSparSectionsWithSpan&lt;br/&gt;(等間隔グリッド, element=500)"]
+        B2 --&gt; F
+        F --&gt; G["clsSparSection&lt;br/&gt;(EA/GK/EIy/EIz 等)"]
+        H["Mod15_桁荷重&lt;br/&gt;.BuildSparForceVector&lt;br/&gt;(荷重ベクトル + 桁自重)"]
+        G --&gt; H
+        H --&gt; I["Mod16_桁FEM.SolveSparFEM&lt;br/&gt;(3D梁FEM, ブロック三重対角Thomas法)"]
+        I --&gt; J["clsSparDeformation&lt;br/&gt;(Ux/Uy/Uz/THx/THy/THz, BMD/SFD)"]
+        J --&gt; K["Mod17_桁強度座屈&lt;br/&gt;.EvaluateSparStrength&lt;br/&gt;(Tsai-Wu複合則, 座屈安全率×4方式)"]
+        K --&gt; L["clsSparStrength&lt;br/&gt;(TsaiWuPipe/TsaiWuUD, Buckling1〜4)"]
+    end
+
+    E --&gt;|"スプライン補間で&lt;br/&gt;コサイン分布→等間隔"| F
+    E -.-&gt;|"スプライン補間"| H</code></pre>
+<p>破線の矢印がスプライン補間による橋渡し(コサイン分布グリッド→等間隔グリッド)、実線が同じグリッド内でのデータの受け渡しです。</p>
 <h2 id="エントリポイントは2つある">エントリポイントは2つある<a class="headerlink" href="#エントリポイントは2つある" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>💻 対応コード: <code>Mod08_空力実行.bas</code> の <code>RunAero</code>、<code>Mod18_桁構造解析実行.bas</code> の <code>RunSparSolve</code> / <code>SolveSparFromAoa</code></p>
