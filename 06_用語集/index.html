@@ -834,9 +834,9 @@
 <td>1/rad</td>
 </tr>
 <tr>
-<td>α_L0</td>
+<td>−α_L0</td>
 <td><code>zeroAJohen(i)</code></td>
-<td>ゼロ揚力角(2次元翼型データ由来)</td>
+<td>ゼロ揚力角の符号反転値(2次元翼型データ由来)。<strong>注意</strong>: 標準的な意味でのα_L0そのものではなく、その符号を反転した値がここに格納されている(キャンバー翼型ではα_L0は負なので、zeroAJohenは正の値になる)</td>
 <td>deg</td>
 </tr>
 <tr>
@@ -847,8 +847,8 @@
 </tr>
 <tr>
 <td>(α − α_L0)</td>
-<td><code>aba(i)</code></td>
-<td>絶対迎角(ラジアン)</td>
+<td><code>aba(i)</code>(= <code>geo.aoa(i) + zeroAJohen(i)</code>)</td>
+<td>絶対迎角(ラジアン)。zeroAJohenが−α_L0を格納しているため、コード上は「足し算」になる</td>
 <td>rad</td>
 </tr>
 <tr>
@@ -914,7 +914,7 @@
 <tr>
 <td>Cp(y)</td>
 <td><code>Cp(i)</code></td>
-<td>局所空力中心位置(翼弦割合、0〜1)</td>
+<td>局所圧力中心位置(翼弦割合、0〜1)。「空力中心(aerodynamic center)」とは別概念なので注意</td>
 <td>—</td>
 </tr>
 <tr>

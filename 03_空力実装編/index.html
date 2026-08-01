@@ -586,10 +586,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-空力中心ピッチングモーメントの積分" class="md-nav__link">
+  <a href="#5-圧力中心ピッチングモーメントの積分" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. 空力中心・ピッチングモーメントの積分
+        5. 圧力中心・ピッチングモーメントの積分
       
     </span>
   </a>
@@ -827,10 +827,10 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#5-空力中心ピッチングモーメントの積分" class="md-nav__link">
+  <a href="#5-圧力中心ピッチングモーメントの積分" class="md-nav__link">
     <span class="md-ellipsis">
       
-        5. 空力中心・ピッチングモーメントの積分
+        5. 圧力中心・ピッチングモーメントの積分
       
     </span>
   </a>
@@ -948,14 +948,14 @@ Cl_dist(j) = minfJohen(j) * (aba(j) - W(j) / V1)
 <div class="highlight"><pre><span></span><code>CdDisJohen(i) = cd1 * geo.ratio1(i) + cd2 * (1 - geo.ratio1(i))
 </code></pre></div>
 <p>のように加重平均しています。</p>
-<h2 id="5-空力中心ピッチングモーメントの積分">5. 空力中心・ピッチングモーメントの積分<a class="headerlink" href="#5-空力中心ピッチングモーメントの積分" title="Permanent link">&para;</a></h2>
+<h2 id="5-圧力中心ピッチングモーメントの積分">5. 圧力中心・ピッチングモーメントの積分<a class="headerlink" href="#5-圧力中心ピッチングモーメントの積分" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>💻 対応コード: <code>Mod05_空力ソルバー.bas</code> の <code>SolveAero</code>(<code>Cp(i)</code>、<code>MG(i)</code>/<code>Cmg</code>の計算)</p>
 </blockquote>
 <div class="highlight"><pre><span></span><code>Cp(i) = 0.25 - CmDisJohen(i) / Cl_dist(i)
 MG(i) = Lift(i) * (geo.KetaIti(i) - Cp(i)) * geo.Cord(i)
 </code></pre></div>
-<p>が理論編§7の空力中心・ピッチングモーメントの式にそのまま対応します。<code>geo.KetaIti(i)</code>(桁位置、コード上は0〜1の割合)と<code>Cp(i)</code>(空力中心、翼弦割合)の差に翼弦長を掛けることで、桁位置を基準とした局所揚力のモーメントアーム[m]を求めています。</p>
+<p>が理論編§7の圧力中心・ピッチングモーメントの式にそのまま対応します。<code>geo.KetaIti(i)</code>(桁位置、コード上は0〜1の割合)と<code>Cp(i)</code>(圧力中心、翼弦割合)の差に翼弦長を掛けることで、桁位置を基準とした局所揚力のモーメントアーム[m]を求めています。</p>
 <h2 id="6-トリム速度の反復ループ">6. トリム速度の反復ループ<a class="headerlink" href="#6-トリム速度の反復ループ" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>💻 対応コード: <code>Mod05_空力ソルバー.bas</code> の <code>SolveAero</code>(<code>For iter = 1 To MAX_ITER</code> ループ全体)</p>

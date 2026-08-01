@@ -985,7 +985,7 @@ iyUD = iyUD + 0.25 * (rOut ^ 4 - rIn ^ 4) * 2 * (-Cos(pi / 2 + sita / 2) + Cos(p
 <p><code>BuildSparForceVector</code>は、変換後の分布に動圧・面積分担(<code>dsFemDis</code>、翼弦長の台形則)を掛けて揚力・抗力・モーメントの節点荷重を求め、そこから桁自重(§6)・二次部材重量(リブ・外皮などの概算、<code>wps</code>係数×翼面積分布)を差し引いて、最終的な荷重ベクトル(節点ごとに[fy, fz, mx]、6自由度中3つ)を組み立てます。</p>
 <div class="highlight"><pre><span></span><code>fy = liftFem(i) * G_ACCEL - wSecondary - wNode(i)   &#39; 揚力 - 二次部材重量 - 桁自重
 </code></pre></div>
-<p>桁位置(KetaIti)は空力側シートがパーセント表記(例: 35=35%)で保持しているため、<code>/ 100#</code>で分率化してから空力中心Cp(0〜1)と揃えて使います。この単位を揃え忘れるとねじりモーメントが2桁ずれて暴走する、という実機テストで見つかった不具合があった箇所です(詳細は<code>07_既知の制限事項.md</code>)。</p>
+<p>桁位置(KetaIti)は空力側シートがパーセント表記(例: 35=35%)で保持しているため、<code>/ 100#</code>で分率化してから圧力中心Cp(0〜1)と揃えて使います。この単位を揃え忘れるとねじりモーメントが2桁ずれて暴走する、という実機テストで見つかった不具合があった箇所です(詳細は<code>07_既知の制限事項.md</code>)。</p>
 <h2 id="8-3d梁femの組立ブロックthomas法による求解">8. 3D梁FEMの組立・ブロックThomas法による求解<a class="headerlink" href="#8-3d梁femの組立ブロックthomas法による求解" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>💻 対応コード: <code>Mod16_桁FEM.bas</code> の <code>BuildElementBlocks</code>(要素剛性行列)、<code>SolveSparFEM</code>(組立・求解)</p>
