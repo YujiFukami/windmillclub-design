@@ -14,6 +14,9 @@ for f in "$SRC"/*.md; do
     esac
     cp "$f" "$DST/"
 done
+# MkDocsはファイル名が index.md のものだけをサイトルート(/)に出力するため、
+# 00_はじめに.md をルート表示用にもコピーする(内容は同一、二重管理ではなく毎回上書き)。
+cp "$SRC/00_はじめに.md" "$DST/index.md"
 if [ -f "$SRC/CNAME" ]; then
     cp "$SRC/CNAME" "$DST/"
 fi
