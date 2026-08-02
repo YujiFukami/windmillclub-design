@@ -1021,6 +1021,7 @@ zakutu3 = 4 * 2^0.5 / 9 * (exEff*eyEff)^0.5 / (1 - rmux1^2*eyEff/exEff) * lamina
 <p>💻 対応コード: <code>Mod18_桁構造解析実行.bas</code> の <code>SolveSparFromAoa</code>/<code>RunSparSolve</code></p>
 </blockquote>
 <p><code>01_全体アーキテクチャ.md</code>で説明した通り、<code>SolveSparFromAoa</code>が空力解析(<code>Mod08</code>)→断面剛性(<code>Mod13</code>→<code>Mod11</code>)→荷重ベクトル(<code>Mod15</code>)→FEM求解(<code>Mod16</code>)→強度評価(<code>Mod17</code>)を、シートの読み書きを介さずメモリ上のオブジェクトで一気通貫に実行する、構造解析側の唯一の入口です。<code>RunSparSolve</code>はこれを「パラメータ設定」シートの取付角で1回実行し、結果の抜粋をイミディエイトウィンドウへ出力する、目視確認用のラッパーです。</p>
+<p><code>SolveSparFromAoa</code>の<code>element</code>引数(FEM要素数)は<code>Optional</code>で既定値500ですが、<code>RunSparSolve</code>からは<code>Get02_桁解析分割数</code>(「パラメータ_桁」シートの「計算分割数」)の値を明示的に渡しています。空力側の分割数(<code>Get01_翼解析分割数</code>、§1参照)と同じく、シート側で分割数を調整できるようにするための対応です。</p>
 
 
 

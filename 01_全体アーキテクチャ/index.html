@@ -842,7 +842,7 @@
 <h2 id="全体の流れデータフロー">全体の流れ(データフロー)<a class="headerlink" href="#全体の流れデータフロー" title="Permanent link">&para;</a></h2>
 <pre class="mermaid"><code>flowchart TD
     subgraph AERO["空力解析"]
-        A1["パラメータ_翼 等シート"] --&gt;|"Mod01_情報取得_翼"| B1["clsWingGeometry.Build&lt;br/&gt;(コサイン分布グリッド, 1000点)"]
+        A1["パラメータ_翼 等シート"] --&gt;|"Mod01_情報取得_翼"| B1["clsWingGeometry.Build&lt;br/&gt;(コサイン分布グリッド, シート指定・既定1000点)"]
         DB["Mod04_翼型データベース&lt;br/&gt;(Cl/Cd/Cm特性)"]
         B1 --&gt; C["Mod05_空力ソルバー.SolveAero&lt;br/&gt;(揚力線理論, V1収束ループ)"]
         DB -.-&gt; C
@@ -851,7 +851,7 @@
 
     subgraph STRUCT["構造解析"]
         A2["パラメータ_桁 等シート"] --&gt;|"Mod02_情報取得_桁"| B2["桁の積層・UD・マンドレル径データ&lt;br/&gt;(可変長ラゲッド配列)"]
-        F["Mod13_桁断面剛性実行&lt;br/&gt;.BuildSparSectionsWithSpan&lt;br/&gt;(等間隔グリッド, element=500)"]
+        F["Mod13_桁断面剛性実行&lt;br/&gt;.BuildSparSectionsWithSpan&lt;br/&gt;(等間隔グリッド, シート指定・既定500)"]
         B2 --&gt; F
         F --&gt; G["clsSparSection&lt;br/&gt;(EA/GK/EIy/EIz 等)"]
         H["Mod15_桁荷重&lt;br/&gt;.BuildSparForceVector&lt;br/&gt;(荷重ベクトル + 桁自重)"]
@@ -886,8 +886,8 @@
 <h2 id="2つのグリッド格子点がある">2つのグリッド(格子点)がある<a class="headerlink" href="#2つのグリッド格子点がある" title="Permanent link">&para;</a></h2>
 <p>空力側と構造側では、スパン方向の分割の仕方(グリッド)が異なります。これは学習者が混乱しやすいポイントなので、明示的に説明します。</p>
 <ul>
-<li><strong>空力側のグリッド</strong>: <code>clsWingGeometry.Build</code>で作られる、<strong>コサイン分布</strong>のグリッド(デフォルト1000点)。翼端付近を密に、翼根付近を粗く配置する。揚力線理論(フーリエ級数展開)ではこの配置が数値的に精度が良いことが知られている(詳細は<code>02_空力理論編.md</code>)。</li>
-<li><strong>構造側のグリッド</strong>: <code>Mod16_桁FEM</code>が扱う、<strong>等間隔</strong>のグリッド(デフォルト500要素=501節点)。有限要素法(FEM)では要素を等間隔に切るのが実装上シンプルで、この程度の要素数があれば分布荷重・断面変化を十分な精度で近似できる。</li>
+<li><strong>空力側のグリッド</strong>: <code>clsWingGeometry.Build</code>で作られる、<strong>コサイン分布</strong>のグリッド(「パラメータ_翼」シートの「解析分割数」で指定、既定1000点、<code>Get01_翼解析分割数</code>経由)。翼端付近を密に、翼根付近を粗く配置する。揚力線理論(フーリエ級数展開)ではこの配置が数値的に精度が良いことが知られている(詳細は<code>02_空力理論編.md</code>)。</li>
+<li><strong>構造側のグリッド</strong>: <code>Mod16_桁FEM</code>が扱う、<strong>等間隔</strong>のグリッド(「パラメータ_桁」シートの「計算分割数」で指定、既定500要素=501節点、<code>Get02_桁解析分割数</code>経由)。有限要素法(FEM)では要素を等間隔に切るのが実装上シンプルで、この程度の要素数があれば分布荷重・断面変化を十分な精度で近似できる。</li>
 </ul>
 <p>この2つのグリッドの間で、空力解析の結果(Cl_dist、CdDisJohen、CmDisJohen、桁位置KetaItiなど)を<strong>橋渡し</strong>しているのが、<code>Mod15_桁荷重.bas</code>内のスプライン補間です。</p>
 <blockquote>
