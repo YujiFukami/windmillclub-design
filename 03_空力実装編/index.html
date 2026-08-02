@@ -640,6 +640,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#10-結果のcsv出力" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. 結果のCSV出力
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -881,6 +892,17 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#10-結果のcsv出力" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. 結果のCSV出力
+      
+    </span>
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -985,6 +1007,45 @@ V1 = Sqr(2 * Weight / (RO * geo.s * CL_sum))
 <li><code>Mod09_空力迎角スイープ.RunAeroSweep</code> — 「パラメータ設定」シートの迎角範囲を1本ずつ<code>SolveAeroFromSheet</code>へ渡し、結果を2次元配列にまとめてイミディエイトウィンドウへ出力する(迎角ごとの特性を横に並べて比較したいときに使う)。</li>
 <li><code>Mod06_空力ソルバーテスト.Test_AeroSolver</code> — シートを介さず、コード内に直接埋め込んだ既知の入力データで<code>SolveAero</code>を実行し、Python参照実装で計算しておいた期待値と突き合わせるテスト。揚力線理論の実装自体が壊れていないかを、シートの状態に左右されずに確認できます。</li>
 </ul>
+<h2 id="10-結果のcsv出力">10. 結果のCSV出力<a class="headerlink" href="#10-結果のcsv出力" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod20_空力結果CSV出力.bas</code>、<code>Mod19_出力共通.bas</code></p>
+</blockquote>
+<p>元のMATLABプログラム(<code>WING_IKI.m</code>/<code>geikaku_henka.m</code>)は解析結果をCSVファイルへ書き出していました。このVBA移植版でも、ユーザー提供の共通ユーティリティ<code>OutputText</code>(2次元配列→テキストファイル、文字コード・区切り文字を指定可能)を使って同等のCSVを再現しています。</p>
+<table>
+<thead>
+<tr>
+<th>元MATLABのファイル</th>
+<th>VBA側の対応</th>
+<th>呼び出し元</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>output_wing_analyze_data.csv</code></td>
+<td><code>WriteAeroSingleCsv</code></td>
+<td><code>Mod08_空力実行.RunAero</code></td>
+</tr>
+<tr>
+<td><code>heimenkei,aoa=X.csv</code></td>
+<td><code>WriteAeroSweepDetailCsv</code></td>
+<td><code>Mod09_空力迎角スイープ.RunAeroSweep</code>(迎角ごと)</td>
+</tr>
+<tr>
+<td><code>output_geikaku_henka.csv</code></td>
+<td><code>WriteAeroSweepSummaryCsv</code></td>
+<td><code>Mod09_空力迎角スイープ.RunAeroSweep</code>(ループ後に1回)</td>
+</tr>
+</tbody>
+</table>
+<p>出力先は<code>ThisWorkbook.Path &amp; "\output\"</code>固定(<code>Mod19_出力共通.EnsureOutputFolder</code>、無ければ自動作成)、文字コードはShift-JIS固定(<code>InputText</code>を使う既存の入力CSVと統一)です。列ごとに幅が異なる「分布本体+空行+key,valueフッター」という構成のCSVは、行を<code>Collection</code>にいったん積んでから最大列数へ空文字パディングする<code>Mod19_出力共通.PadRowsToArray2D</code>で1回の<code>OutputText</code>呼び出しにまとめています。</p>
+<p>元コードには2件の既知の不具合がありましたが、ここでは<strong>再現せず正しい値を出力</strong>しています。</p>
+<ul>
+<li><strong>全機誘導抗力係数</strong>: 元コードは局所値(翼端1点の<code>Cd_ind</code>)を全機値として誤って使っていましたが、ここでは<code>clsAeroResult.Cdi_overall</code>(=<code>CL²(1+δ)/π/AR</code>、<code>Mod05_空力ソルバー</code>が別途正しく計算・保持している全機スカラー値)を使います。</li>
+<li><strong>翼弦長・区間長の内訳</strong>: 元コードは区分点が3個であることを前提にハードコードしていたため、区分点数が3以外だと不正確でした。ここでは実際の区分点数に応じた可変長リストとして出力します(<code>AppendBreakpointRows</code>)。</li>
+</ul>
+<p>「吹き降ろし分布」「誘導抗力係数分布」等、<code>clsAeroResult</code>に直接保持されていない量は、保持済みの値(<code>Ae</code>/<code>ew</code>/<code>Cl_dist</code>等)から<code>Mod05_空力ソルバー</code>内部と同じ式で再構成しています(<code>BuildAeroDistRow</code>)。</p>
+<p>出力するファイルの取捨選択は、「設定」シートの「出力ファイル設定」テーブル(ファイル種別・出力する(TRUE/FALSE)の2列)で行います。<code>Mod19_出力共通.ShouldOutput(key)</code>がこのテーブルを読み、テーブルやキーが未作成の場合は既定で「出力する」側にフォールバックします(シートを作る前でも動作が壊れないようにするため)。</p>
 
 
 

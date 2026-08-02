@@ -874,13 +874,17 @@
 <li><strong><code>Mod08_空力実行.RunAero</code></strong> — 空力解析<strong>だけ</strong>を実行し、結果を「結果_空力」シートへ書き出す。目視確認・記録用。</li>
 <li><strong><code>Mod18_桁構造解析実行.RunSparSolve</code></strong> — 空力解析から強度・座屈評価まで<strong>一括</strong>で実行する、本番用のエントリポイント。</li>
 </ul>
+<p>それぞれに「迎角を1本だけ解く」版と「迎角スイープ」版があります(<code>Mod09_空力迎角スイープ.RunAeroSweep</code>/<code>Mod22_桁構造解析スイープ実行.RunSparSolveSweep</code>)。スイープ版もシートの「解析対象迎角」範囲を1本ずつ<code>SolveAeroFromSheet</code>/<code>SolveSparFromAoa</code>へ渡すだけで、内部の計算経路は単一実行と共通です。</p>
 <p>重要なのは、<code>RunSparSolve</code>が呼ぶ<code>SolveSparFromAoa</code>は、<strong>「結果_空力」シートを経由しない</strong>という点です。</p>
-<div class="highlight"><pre><span></span><code>Public Sub SolveSparFromAoa(...)
-    Dim aeroResult As clsAeroResult
+<div class="highlight"><pre><span></span><code>Public Sub SolveSparFromAoa(ByVal aoa1 As Double, ByRef geo As clsWingGeometry, _
+                             ByRef sec As clsSparSection, ByRef deformation As clsSparDeformation, _
+                             ByRef strength As clsSparStrength, ByRef aeroResult As clsAeroResult, _
+                             Optional ByVal element As Long = 500)
     Call Mod08_空力実行.SolveAeroFromSheet(aoa1, geo, aeroResult)
     Set sec = Mod13_桁断面剛性実行.BuildSparSectionsWithSpan(geo.BSpan / 2, element)
     ...
 </code></pre></div>
+<p><code>aeroResult</code>は呼び出し側にもByRefで返します(CSV出力(<code>05_構造実装編.md</code>§11)が空力解析結果を再利用するため)。</p>
 <p><code>SolveAeroFromSheet</code>は「パラメータ_翼」シートを読んで空力解析を行い、結果を<code>geo</code>(翼形状)・<code>aeroResult</code>(空力解析結果)という2つのオブジェクトとしてメモリ上に返すだけの関数です。シートへの書き出しは行いません。<code>SolveSparFromAoa</code>はこの2つのオブジェクトをメモリ上でそのまま次の断面剛性計算・荷重計算に渡していきます。</p>
 <p><strong>なぜこの構成にしたか</strong>: 元のMATLAB(<code>WING_IKI.m</code>→<code>WING_FEM_IKI.m</code>)は、空力解析の結果をいったんファイルに書き出し、構造解析側がそのファイルを読み直す、という2段階の独立したスクリプト構成でした。VBAに移植する際、<code>RunAero</code>(シートに書き出す版)はそのまま目視確認用に残しつつ、本番の一括計算では<strong>シートの読み書きを介さずオブジェクトを直接受け渡す</strong>ように変更しています。理由は、シート経由だと「シートに書き出す前の状態」と「シートから読み直した状態」がズレるリスク(書き出し忘れ・書き出し後の手動編集など)を排除できるためです。</p>
 <h2 id="2つのグリッド格子点がある">2つのグリッド(格子点)がある<a class="headerlink" href="#2つのグリッド格子点がある" title="Permanent link">&para;</a></h2>

@@ -705,6 +705,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#11-結果のcsv出力" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. 結果のCSV出力
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. 結果のCSV出力">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#グリッド橋渡しの再利用buildfemaerodist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グリッド橋渡しの再利用(BuildFemAeroDist)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#元コードの2件の不具合は再現しない" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        元コードの2件の不具合は再現しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#プライ別ud層別の生データ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プライ別・UD層別の生データ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#出力ファイルの選択" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        出力ファイルの選択
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#迎角スイープ新機能mod22_桁構造解析スイープ実行" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        迎角スイープ(新機能、Mod22_桁構造解析スイープ実行)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -903,6 +975,78 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#11-結果のcsv出力" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. 結果のCSV出力
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. 結果のCSV出力">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#グリッド橋渡しの再利用buildfemaerodist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        グリッド橋渡しの再利用(BuildFemAeroDist)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#元コードの2件の不具合は再現しない" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        元コードの2件の不具合は再現しない
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#プライ別ud層別の生データ" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        プライ別・UD層別の生データ
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#出力ファイルの選択" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        出力ファイルの選択
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#迎角スイープ新機能mod22_桁構造解析スイープ実行" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        迎角スイープ(新機能、Mod22_桁構造解析スイープ実行)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1022,6 +1166,79 @@ zakutu3 = 4 * 2^0.5 / 9 * (exEff*eyEff)^0.5 / (1 - rmux1^2*eyEff/exEff) * lamina
 </blockquote>
 <p><code>01_全体アーキテクチャ.md</code>で説明した通り、<code>SolveSparFromAoa</code>が空力解析(<code>Mod08</code>)→断面剛性(<code>Mod13</code>→<code>Mod11</code>)→荷重ベクトル(<code>Mod15</code>)→FEM求解(<code>Mod16</code>)→強度評価(<code>Mod17</code>)を、シートの読み書きを介さずメモリ上のオブジェクトで一気通貫に実行する、構造解析側の唯一の入口です。<code>RunSparSolve</code>はこれを「パラメータ設定」シートの取付角で1回実行し、結果の抜粋をイミディエイトウィンドウへ出力する、目視確認用のラッパーです。</p>
 <p><code>SolveSparFromAoa</code>の<code>element</code>引数(FEM要素数)は<code>Optional</code>で既定値500ですが、<code>RunSparSolve</code>からは<code>Get02_桁解析分割数</code>(「パラメータ_桁」シートの「計算分割数」)の値を明示的に渡しています。空力側の分割数(<code>Get01_翼解析分割数</code>、§1参照)と同じく、シート側で分割数を調整できるようにするための対応です。</p>
+<p><code>SolveSparFromAoa</code>は空力解析結果(<code>aeroResult</code>)もByRefで返します。以前は内部で計算した後に呼び出し元へ返さず捨てていましたが、§11のCSV出力(<code>lift_fem</code>等の再構成)がこの値を必要とするため拡張しました。</p>
+<h2 id="11-結果のcsv出力">11. 結果のCSV出力<a class="headerlink" href="#11-結果のcsv出力" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod21_桁結果CSV出力.bas</code>、<code>Mod22_桁構造解析スイープ実行.bas</code>、<code>Mod15_桁荷重.bas</code> の <code>BuildFemAeroDist</code></p>
+</blockquote>
+<p>元のMATLABプログラム(<code>WING_FEM_IKI.m</code>)は解析結果を6種類のCSVへ書き出していました。空力側(§10、<code>Mod20_空力結果CSV出力</code>)と同じ<code>OutputText</code>/<code>Mod19_出力共通</code>の仕組みで、構造側も同等のCSVを再現しています。</p>
+<table>
+<thead>
+<tr>
+<th>元MATLABのファイル</th>
+<th>VBA側の対応</th>
+<th>出力設定キー</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>output_FEM_analyze_data.csv</code></td>
+<td><code>Mod21_桁結果CSV出力.WriteSparSingleCsv</code></td>
+<td><code>構造_単一</code></td>
+</tr>
+<tr>
+<td><code>output_BMDとか.csv</code></td>
+<td><code>WriteSparBmdCsv</code></td>
+<td><code>構造_BMD可視化</code></td>
+</tr>
+<tr>
+<td><code>output_基本積層応力.csv</code></td>
+<td><code>WriteSparPlyStressCsv</code></td>
+<td><code>構造_基本積層応力</code></td>
+</tr>
+<tr>
+<td><code>output_基本積層歪.csv</code></td>
+<td><code>WriteSparPlyStrainCsv</code></td>
+<td><code>構造_基本積層歪</code></td>
+</tr>
+<tr>
+<td><code>output_部分積層応力.csv</code></td>
+<td><code>WriteSparUdStressCsv</code></td>
+<td><code>構造_部分積層応力</code></td>
+</tr>
+<tr>
+<td><code>output_部分積層歪.csv</code></td>
+<td><code>WriteSparUdStrainCsv</code></td>
+<td><code>構造_部分積層歪</code></td>
+</tr>
+<tr>
+<td><code>output_ketasiken_date.csv</code></td>
+<td><code>WriteSparTestCsv</code></td>
+<td><code>構造_桁試験照合</code></td>
+</tr>
+<tr>
+<td><code>keta,aoa=X.csv</code>(新規)</td>
+<td><code>Mod22_桁構造解析スイープ実行.RunSparSolveSweep</code></td>
+<td><code>構造_スイープ詳細</code></td>
+</tr>
+</tbody>
+</table>
+<p>上記のうち単一実行分(表の上7行)は<code>Mod21_桁結果CSV出力.WriteAllSparCsv</code>にまとめてあり、<code>Mod18_桁構造解析実行.RunSparSolve</code>の最後から1回呼ぶだけで全て出力されます。</p>
+<h3 id="グリッド橋渡しの再利用buildfemaerodist">グリッド橋渡しの再利用(<code>BuildFemAeroDist</code>)<a class="headerlink" href="#グリッド橋渡しの再利用buildfemaerodist" title="Permanent link">&para;</a></h3>
+<p>§7で説明した「コサイン分布グリッド→FEM等間隔グリッド」のスプライン変換(<code>SplineAeroToFem</code>)は、元々<code>BuildSparForceVector</code>(荷重ベクトル組み立て)専用のPrivate関数でしたが、CSV出力側(<code>lift_fem</code>/<code>Cd_ind_fem</code>等の列)も同じ変換結果を必要とするため、<code>Mod15_桁荷重.BuildFemAeroDist</code>(Public)として1本化しました。<code>BuildSparForceVector</code>はこの関数の戻り値から荷重ベクトルを組むだけになっており、計算式そのものは変更していません(挙動は従来と同じです)。あわせて<code>SplineAeroToFem</code>に変換種別6(誘導迎角)・7(有効迎角)を追加し、<code>w_fem</code>(downwash速度)・<code>ae_fem</code>(有効迎角)列の再構成に使っています。</p>
+<h3 id="元コードの2件の不具合は再現しない">元コードの2件の不具合は再現しない<a class="headerlink" href="#元コードの2件の不具合は再現しない" title="Permanent link">&para;</a></h3>
+<p>空力側(§10)と同様、構造側でも以下は<strong>修正した値</strong>を出力します。</p>
+<ul>
+<li><strong>「最大応力/最大歪」列</strong>: 元コードは符号つきの単純<code>max()</code>で、圧縮側(負の値)の真の最大を取りこぼすことがありました。ここでは絶対値の最大(<code>max(abs())</code>)に修正しています(<code>Mod17_桁強度座屈.EvaluateSparStrength</code>の<code>sig1MaxPipe</code>/<code>eps1MaxPipe</code>等、絶対値比較へ変更済み)。</li>
+<li><strong>ヘッダー/データの列ずれ</strong>: 元コードの<code>output_FEM_analyze_data.csv</code>はヘッダー行とデータ列の対応にずれがある(ソース中に重複したカンマがある)既知の問題がありましたが、ここでは正しく対応した列見出しを出力します。</li>
+</ul>
+<h3 id="プライ別ud層別の生データ">プライ別・UD層別の生データ<a class="headerlink" href="#プライ別ud層別の生データ" title="Permanent link">&para;</a></h3>
+<p><code>output_基本/部分積層応力・歪.csv</code>が必要とする「プライ(層)ごとの生の応力・歪」は、従来の<code>clsSparStrength</code>(要素ごとの最小Tsai-Wu比・座屈安全率だけを保持)には無かったため、<code>SetPlyDetails</code>で拡張しました(§9の<code>EvaluateSparStrength</code>のループ内、φ=270°(パイプ)/φ=270°(UD、2角度中の2番目)における生値を追加収集)。既存の<code>TsaiWuPipe</code>/<code>TsaiWuUD</code>/<code>Buckling1〜4</code>の計算・戻り値は変更していません。</p>
+<p>積層角度・UD幅そのもの(<code>output_BMDとか.csv</code>のtheta/UD幅列)は計算結果ではなくシート入力そのものなので<code>clsSparStrength</code>には保持せず、§2と同じ<code>Mod11_桁断面剛性.FindSparRow</code>パターンで、<code>Mod21_桁結果CSV出力</code>が要素位置ごとに直接シート読み込み値から引き直しています。</p>
+<h3 id="出力ファイルの選択">出力ファイルの選択<a class="headerlink" href="#出力ファイルの選択" title="Permanent link">&para;</a></h3>
+<p>出力するファイルの取捨選択は、空力側と共通の「設定」シートの「出力ファイル設定」テーブルで行います(<code>Mod19_出力共通.ShouldOutput</code>、テーブル未作成時は既定で「出力する」にフォールバック)。</p>
+<h3 id="迎角スイープ新機能mod22_桁構造解析スイープ実行">迎角スイープ(新機能、<code>Mod22_桁構造解析スイープ実行</code>)<a class="headerlink" href="#迎角スイープ新機能mod22_桁構造解析スイープ実行" title="Permanent link">&para;</a></h3>
+<p>元MATLABにはあった構造側の迎角スイープ(command=4相当、<code>keta,aoa=X.csv</code>)は、このVBA移植には存在していなかったため新規に実装しました。<code>Mod09_空力迎角スイープ</code>と同じ「解析対象迎角」シート範囲を使い、角度ごとに<code>Mod18_桁構造解析実行.SolveSparFromAoa</code>をフルに解き直します(空力だけを振る<code>Mod09</code>と違い、断面剛性〜FEM求解〜強度評価まで毎回やり直すため1角度あたりのコストは高くなります)。列は単一実行の<code>output_FEM_analyze_data.csv</code>相当と完全に同じにするため、行の組み立て自体は<code>Mod21_桁結果CSV出力.BuildSparDetailRows</code>をそのまま再利用しています。</p>
 
 
 
