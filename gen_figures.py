@@ -554,6 +554,134 @@ def fig_material_comparison():
     save(fig, 'material_comparison.svg')
 
 
+# ============================================================
+# 図14: ワイヤー機の桁支持と1次不静定 (04_構造理論編.md §10)
+# ============================================================
+def _wall_hatch(ax, x, y0, y1, n=8, length=0.35, angle=45):
+    """固定端(壁)のハッチング。fig_cantilever_modelと同じ流儀。"""
+    ax.plot([x, x], [y0, y1], color='#333', lw=2.5, solid_capstyle='butt')
+    dy = (y1 - y0) / n
+    dx = -length * np.cos(np.radians(angle))
+    ddy = -length * np.sin(np.radians(angle))
+    for i in range(n + 1):
+        yy = y0 + dy * i
+        ax.plot([x, x + dx], [yy, yy + ddy], color='#333', lw=1.0)
+
+
+def _ground_hatch(ax, x, y, w=0.6, n=6, length=0.22, angle=-55):
+    """アンカー(胴体側固定点)のハッチング。"""
+    ax.plot([x - w / 2, x + w / 2], [y, y], color='#333', lw=2.0)
+    for i in range(n + 1):
+        xx = x - w / 2 + (w / n) * i
+        ax.plot([xx, xx + length * np.cos(np.radians(angle))],
+                [y, y + length * np.sin(np.radians(angle))], color='#333', lw=0.9)
+
+
+def fig_wire_brace_indeterminate():
+    WIRE = '#7a4fab'
+    fig, ax = plt.subplots(figsize=(7.9, 4.6))
+    ax.set_xlim(-2.2, 10.8)
+    ax.set_ylim(-3.6, 3.2)
+    ax.axis('off')
+    ax.set_aspect('equal')
+
+    L, xWire, hEff = 10.0, 6.5, 2.0
+    ax.plot([0, L], [0, 0], color='#14283d', lw=4, solid_capstyle='round', zorder=3)
+    _wall_hatch(ax, 0, -0.9, 0.9)
+    ax.plot([L], [0], marker='o', ms=4, color='#14283d', zorder=4)
+    ax.plot([xWire], [0], marker='o', ms=7, color='#14283d', mfc='white', mew=2, zorder=5)
+
+    anchor = (0, -hEff)
+    _ground_hatch(ax, anchor[0], anchor[1] - 0.05, w=1.0)
+    ax.plot([xWire, anchor[0]], [0, anchor[1]], color=WIRE, lw=2.2, zorder=4)
+    ax.plot([anchor[0]], [anchor[1]], marker='^', ms=8, color=WIRE, zorder=5)
+
+    ax.add_patch(FancyArrowPatch((0, -1.5), (xWire, -1.5), arrowstyle='<->',
+                                  color='#2f7d55', lw=1.4, mutation_scale=10, shrinkA=0, shrinkB=0))
+    ax.text(xWire / 2, -1.72, 'xWire (スパン方向距離)', color='#2f7d55', ha='center', va='top', fontsize=10)
+    ax.add_patch(FancyArrowPatch((xWire + 0.55, 0), (xWire + 0.55, anchor[1]), arrowstyle='<->',
+                                  color='#ab4a3a', lw=1.4, mutation_scale=10, shrinkA=0, shrinkB=0))
+    ax.text(xWire + 0.75, anchor[1] / 2, 'hEffective\n(マスト長+定常時たわみ)',
+            color='#ab4a3a', ha='left', va='center', fontsize=9.5)
+
+    ax.annotate('翼根: 完全固定\n反力6成分\n(Fx,Fy,Fz,Mx,My,Mz)', xy=(0, 0.05), xytext=(-2.1, 2.4),
+                fontsize=10, color='#333', ha='left', arrowprops=dict(arrowstyle='-', color='#333', lw=1.0))
+    ax.annotate('ワイヤー取付点', xy=(xWire, 0.15), xytext=(xWire - 2.6, 1.6),
+                fontsize=10, color='#14283d', ha='left', arrowprops=dict(arrowstyle='-', color='#14283d', lw=1.0))
+    ax.annotate('ワイヤー反力1成分\n(張力T、方向は固定)', xy=(xWire / 2, anchor[1] / 2), xytext=(4.6, -3.15),
+                fontsize=10, color=WIRE, ha='left', arrowprops=dict(arrowstyle='-', color=WIRE, lw=1.0))
+    ax.annotate('アンカー\n(胴体側固定点、動かない)', xy=anchor, xytext=(-2.1, -3.1),
+                fontsize=9.5, color=WIRE, ha='left', arrowprops=dict(arrowstyle='-', color=WIRE, lw=1.0))
+    ax.text(7.2, 2.7, '未知数 7個\n(翼根の反力6+ワイヤーの張力1)\n＞ 釣り合い式 6本\n→ 1次不静定',
+            fontsize=10.5, color='#333', ha='left', va='top',
+            bbox=dict(boxstyle='round,pad=0.4', fc='#f5f0fa', ec=WIRE, lw=1.2))
+
+    fig.tight_layout()
+    save(fig, 'wire_brace_indeterminate.svg')
+
+
+# ============================================================
+# 図15: たわみ適合法の3ステップ (04_構造理論編.md §10)
+# ============================================================
+def fig_wire_force_method():
+    WIRE, FAINT = '#7a4fab', '#c8ccd2'
+    L, xWire = 10.0, 6.5
+    x = np.linspace(0, L, 200)
+    iw = int((xWire / L) * (len(x) - 1))
+    fig, axes = plt.subplots(1, 3, figsize=(11.4, 4.0))
+
+    def base(ax):
+        ax.set_xlim(-1.6, 11.2)
+        ax.set_ylim(-1.3, 3.6)
+        ax.axis('off')
+        ax.set_aspect('equal')
+        ax.plot(x, np.zeros_like(x), color=FAINT, lw=2.5, ls='--')
+        _wall_hatch(ax, 0, -0.7, 0.7, n=7, length=0.3)
+
+    # ① ケース0
+    ax = axes[0]
+    base(ax)
+    y0 = 2.6 * (x / L) ** 2
+    ax.plot(x, y0, color='#14283d', lw=3.2)
+    ax.plot([x[iw]], [y0[iw]], marker='o', ms=6, color='#14283d', mfc='white', mew=1.8)
+    ax.add_patch(FancyArrowPatch((x[iw], 0), (x[iw], y0[iw]), arrowstyle='-|>',
+                                  color='#ab4a3a', lw=1.6, mutation_scale=12, shrinkA=0, shrinkB=2))
+    ax.text(x[iw] + 0.3, y0[iw] * 0.5, 'δ0', color='#ab4a3a', fontsize=13, va='center')
+    ax.set_title('① ケース0\n空力荷重のみ(ワイヤーなし)', fontsize=11, color='#333')
+    ax.text(L * 0.5, -1.15, '取付点の変位をワイヤー方向へ投影 → δ0', fontsize=8.5, color='#333', ha='center')
+
+    # ② ケース1
+    ax = axes[1]
+    base(ax)
+    y1 = 0.55 * (x / L) ** 2
+    ax.plot(x, y1, color='#14283d', lw=3.2)
+    ax.plot([x[iw]], [y1[iw]], marker='o', ms=6, color='#14283d', mfc='white', mew=1.8)
+    ax.add_patch(FancyArrowPatch((x[iw], y1[iw]), (x[iw] - 1.3, y1[iw] - 0.9), arrowstyle='-|>',
+                                  color=WIRE, lw=2.0, mutation_scale=14, shrinkA=0, shrinkB=0))
+    ax.text(x[iw] - 1.65, y1[iw] - 1.25, '単位張力\n(ワイヤー方向)', color=WIRE, fontsize=8.5, ha='right', va='top')
+    ax.add_patch(FancyArrowPatch((x[iw], 0), (x[iw], y1[iw]), arrowstyle='-|>',
+                                  color='#ab4a3a', lw=1.6, mutation_scale=12, shrinkA=0, shrinkB=2))
+    ax.text(x[iw] + 0.3, y1[iw] * 0.5 + 0.15, 'δ1', color='#ab4a3a', fontsize=13, va='center')
+    ax.set_title('② ケース1\n単位ワイヤー力のみ', fontsize=11, color='#333')
+    ax.text(L * 0.5, -1.15, '同じ点の変位(単位力あたり)→ δ1', fontsize=8.5, color='#333', ha='center')
+
+    # ③ 重ね合わせ
+    ax = axes[2]
+    base(ax)
+    yC = y0 - 2.05 * y1
+    ax.plot(x, yC, color='#14283d', lw=3.2)
+    ax.plot([x[iw]], [yC[iw]], marker='o', ms=6, color='#14283d', mfc='white', mew=1.8)
+    anchor = (0, -1.05)
+    _ground_hatch(ax, anchor[0], anchor[1] - 0.03, w=0.8, n=5, length=0.18)
+    ax.plot([x[iw], anchor[0]], [yC[iw], anchor[1]], color=WIRE, lw=2.0)
+    ax.plot([anchor[0]], [anchor[1]], marker='^', ms=7, color=WIRE)
+    ax.set_title('③ 重ね合わせ = ①＋T×②', fontsize=11, color='#333')
+    ax.text(L * 0.5, -1.25, 'T = (目標値 − δ0) / δ1 を満たすTで合成', fontsize=8.5, color='#333', ha='center')
+
+    fig.tight_layout()
+    save(fig, 'wire_force_method.svg')
+
+
 if __name__ == '__main__':
     fig_cosine_grid()
     fig_fourier_circulation()
@@ -568,4 +696,6 @@ if __name__ == '__main__':
     fig_beam_6dof()
     fig_eiy_coefficient_bar()
     fig_material_comparison()
+    fig_wire_brace_indeterminate()
+    fig_wire_force_method()
     print('all figures generated ->', OUT_DIR)
