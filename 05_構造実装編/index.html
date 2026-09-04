@@ -788,6 +788,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#12-ワイヤー機の桁支持の実装" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. ワイヤー機の桁支持の実装
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. ワイヤー機の桁支持の実装">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#呼び出し元での分岐mod18_桁構造解析実行solvesparfromaoa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        呼び出し元での分岐(Mod18_桁構造解析実行.SolveSparFromAoa)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#実機での検証結果2026-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実機での検証結果(2026-09)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#実装時の教訓--適合条件の目標値をゼロにしていた初期実装の誤り" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装時の教訓 — 適合条件の目標値をゼロにしていた初期実装の誤り
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1069,6 +1119,56 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#12-ワイヤー機の桁支持の実装" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        12. ワイヤー機の桁支持の実装
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="12. ワイヤー機の桁支持の実装">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#呼び出し元での分岐mod18_桁構造解析実行solvesparfromaoa" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        呼び出し元での分岐(Mod18_桁構造解析実行.SolveSparFromAoa)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#実機での検証結果2026-09" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実機での検証結果(2026-09)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#実装時の教訓--適合条件の目標値をゼロにしていた初期実装の誤り" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        実装時の教訓 — 適合条件の目標値をゼロにしていた初期実装の誤り
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1268,6 +1368,50 @@ zakutu3 = 4 * 2^0.5 / 9 * (exEff*eyEff)^0.5 / (1 - rmux1^2*eyEff/exEff) * lamina
 <p><code>For aoa = aoaStart To aoaEnd Step aoaStep</code>という素直な<code>For</code>ループは、浮動小数点の丸め誤差で最後の1回が実行されないことがあります(例: 6→7を0.5刻みで振るつもりが、6.5+0.5の丸め誤差で7がわずかに範囲外と判定され、6・6.5の2点しか計算されない)。<code>RunAeroSweep</code>(§9)・<code>RunSparSolveSweep</code>ともに<code>Do...Loop</code>+刻み幅に対する相対許容誤差(<code>aoaStep * 0.0001</code>)つきの<code>Exit Do</code>に置き換えて、この問題を回避しています。</p>
 <h3 id="実行完了メッセージ">実行完了メッセージ<a class="headerlink" href="#実行完了メッセージ" title="Permanent link">&para;</a></h3>
 <p><code>RunSparSolve</code>/<code>RunSparSolveSweep</code>は、実行完了後にユーザー作成の<code>MsgYesNo</code>(はい/いいえを尋ねるメッセージボックス)で完了と出力先フォルダを表示し、「はい」ならユーザー作成の<code>OpenFolder</code>で出力先フォルダをエクスプローラーで開きます(<code>RunAero</code>/<code>RunAeroSweep</code>も同様、§9参照)。</p>
+<h2 id="12-ワイヤー機の桁支持の実装">12. ワイヤー機の桁支持の実装<a class="headerlink" href="#12-ワイヤー機の桁支持の実装" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>💻 対応コード: <code>Mod23_ワイヤー機桁解析.bas</code>、<code>clsWireResult.cls</code></p>
+</blockquote>
+<p>理論編§10のたわみ適合法は、<strong>既存の<code>Mod16_桁FEM.SolveSparFEM</code>を一切改造せず</strong>、2回呼んで重ね合わせる形で実装しています(<code>Mod23_ワイヤー機桁解析.SolveSparFEMWithWire</code>)。</p>
+<div class="highlight"><pre><span></span><code>Dim defCase0 As clsSparDeformation: Set defCase0 = Mod16_桁FEM.SolveSparFEM(sec, fVecAero)
+Dim fVecUnit() As Double: fVecUnit = BuildWireUnitForceVector(Element, iWire, ux, uy)
+Dim defCase1 As clsSparDeformation: Set defCase1 = Mod16_桁FEM.SolveSparFEM(sec, fVecUnit)
+</code></pre></div>
+<p><code>BuildWireUnitForceVector</code>は、<code>Mod15_桁荷重.BuildSparForceVector</code>と同じDOF配列レイアウト(節点ごとに6個、<code>6*(node-1)+1</code>がFx、<code>+2</code>がFy)を使い、ワイヤー取付節点<code>iWire</code>(=<code>xWire</code>に最も近い節点、<code>CLng(xWire/db)+1</code>)だけにワイヤー方向の単位力を立てたベクトルを組みます。</p>
+<p>δ0・δ1(理論編§10)は、<code>clsSparDeformation</code>の<code>Ux(i)</code>/<code>Uy(i)</code>をワイヤー方向単位ベクトル(ux, uy)へ投影して求めます。</p>
+<div class="highlight"><pre><span></span><code>Dim delta0 As Double: delta0 = defCase0.Ux(iWire) * ux + defCase0.Uy(iWire) * uy
+Dim delta1 As Double: delta1 = defCase1.Ux(iWire) * ux + defCase1.Uy(iWire) * uy
+Dim targetProjection As Double: targetProjection = steadyDeflection * uy
+Dim T As Double: T = (targetProjection - delta0) / delta1
+</code></pre></div>
+<p><code>clsSparDeformation</code>は生の配列を外部へ公開しておらず(<code>Ux(i)</code>等のインデックス付き<code>Property Get</code>のみ)、<code>SetDistributions</code>/<code>SetElementForces</code>という一括セッター経由でしか組み立てられない設計のため、「ケース0＋T×ケース1」の重ね合わせも、<code>clsSparDeformation</code>自体を改造するのではなく、<code>Mod23</code>内のフリー関数<code>CombineDeformations</code>が全プロパティ(節点8種・要素6種)をループで<code>def0.Xxx(i) + T*def1.Xxx(i)</code>として計算し、新しいインスタンスを組み立てて返す形にしています(既存クラスは無改造)。</p>
+<p>ワイヤー張力Tと、その桁軸方向・垂直方向への分解(理論編§10)は<code>clsWireResult</code>(新規、公開フィールドのみのシンプルな結果クラス、<code>clsSparSection.Element</code>と同じ流儀)へ格納します。</p>
+<div class="highlight"><pre><span></span><code>wireResult.Tension = T
+wireResult.AxialComponent = T * Abs(ux)
+wireResult.VerticalComponent = T * Abs(uy)
+wireResult.AngleDeg = Application.WorksheetFunction.Atan2(xWire, hEffective) * 180 / Application.WorksheetFunction.pi()
+</code></pre></div>
+<h3 id="呼び出し元での分岐mod18_桁構造解析実行solvesparfromaoa">呼び出し元での分岐(<code>Mod18_桁構造解析実行.SolveSparFromAoa</code>)<a class="headerlink" href="#呼び出し元での分岐mod18_桁構造解析実行solvesparfromaoa" title="Permanent link">&para;</a></h3>
+<p>「パラメータ_桁」シートの「ワイヤーの設定」表(<code>ワイヤーをつける</code>/<code>ワイヤー取付位置(胴体下側距離)</code>/<code>ワイヤー取付位置(主翼側スパン距離)</code>/<code>ワイヤー取付位置の定常時たわみ</code>)は、<code>Get02_ワイヤーの設定()</code>(4要素のVariant配列を返す)で読み取ります。「ワイヤーをつける」が<code>"YES"</code>のときだけ<code>Mod23</code>のワイヤー支持ありのFEM解析へ分岐し、<code>"NO"</code>のときは<code>Mod16_桁FEM.SolveSparFEM</code>への呼び出し引数を一切変更しません(既存の片持ち機の出力に対する回帰影響なし)。</p>
+<div class="highlight"><pre><span></span><code>Dim wireSettings As Variant: wireSettings = Get02_ワイヤーの設定()
+If CStr(wireSettings(1)) = &quot;YES&quot; Then
+    Dim steadyDeflection As Double: steadyDeflection = CDbl(wireSettings(4))
+    Dim hEffective As Double: hEffective = CDbl(wireSettings(2)) + steadyDeflection   &#39; マスト長+定常時たわみ
+    Set deformation = Mod23_ワイヤー機桁解析.SolveSparFEMWithWire(sec, fVec, xWireVal, hEffective, steadyDeflection, wireResult)
+Else
+    Set deformation = Mod16_桁FEM.SolveSparFEM(sec, fVec)
+End If
+</code></pre></div>
+<p>ワイヤー張力等の結果(<code>wireResult</code>、<code>clsWireResult</code>)は、<code>SolveSparFromAoa</code>の<code>Optional ByRef</code>出力引数として<code>RunSparSolve</code>/<code>Mod22_桁構造解析スイープ実行.RunSparSolveSweep</code>まで受け渡され、CSV出力(<code>Mod21_桁結果CSV出力.AppendSparSummaryRows</code>)のサマリ行(翼端たわみ・翼根BMD/SFDなどと同じ並び)に「ワイヤー張力T[N]」「ワイヤー軸圧縮成分[N]」「ワイヤー鉛直成分[N]」「ワイヤー角度[deg]」として追記されます(<code>wireResult</code>が渡されない=片持ち機のときはこの4行自体が出力されません)。</p>
+<h3 id="実機での検証結果2026-09">実機での検証結果(2026-09)<a class="headerlink" href="#実機での検証結果2026-09" title="Permanent link">&para;</a></h3>
+<p>同一機体・同一迎角で「ワイヤーあり」「ワイヤーなし」を実行して<code>output_FEM_analyze_data.csv</code>を突き合わせたところ、以下が確認できています。</p>
+<ul>
+<li><strong>ワイヤー取付点より外側(翼端側)</strong> のBMD・SFD・応力・強度比は、「ワイヤーあり」「ワイヤーなし」で完全に一致する(ワイヤーの影響が取付点より外側に及ばない、という理論通りの挙動)。</li>
+<li><strong>取付点でのSFD(せん断力)のジャンプ量</strong>が、CSVサマリ行の「ワイヤー鉛直成分[N]」の値とほぼ一致する(ワイヤーの力が正しい節点・正しい大きさで作用していることの直接的な裏付け)。</li>
+<li>「ワイヤー角度[deg]」が<code>Atan2(hEffective, xWire)</code>の計算値と完全一致する。</li>
+</ul>
+<h3 id="実装時の教訓--適合条件の目標値をゼロにしていた初期実装の誤り">実装時の教訓 — 適合条件の目標値をゼロにしていた初期実装の誤り<a class="headerlink" href="#実装時の教訓--適合条件の目標値をゼロにしていた初期実装の誤り" title="Permanent link">&para;</a></h3>
+<p>当初の実装では、適合条件を単純に<code>δ0 + T・δ1 = 0</code>(理論編§10の「目標値=δ・uy」ではなく、目標値を常にゼロ)としていました。この場合でも計算自体はエラーなく走り、一見もっともらしい結果(座屈安全率の改善など)が出ていましたが、<strong>「ワイヤー取付位置の定常時たわみ」に指定した値(例: 0.2m)を反映しても、実際の計算結果のUy(その節点のたわみ)がほぼ0(1mm程度)にしかならない</strong>という形で発覚しました。原因は、ワイヤーの角度(hEffective)の計算にはδ(steadyDeflection)を織り込んでいたのに、適合条件の目標値の方にはδを反映していなかったためです。理論編§10の修正後の式(目標値=δ・uy)に直してからは、CSV上のUy(取付点付近)がδに近い値になることを確認しています。シート入力値と計算結果が食い違う場合は、まずこの適合条件の目標値の設定を疑ってください。</p>
 
 
 

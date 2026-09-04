@@ -668,6 +668,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#10-ワイヤー機の桁支持--1次不静定構造とたわみ適合法" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. ワイヤー機の桁支持 — 1次不静定構造とたわみ適合法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. ワイヤー機の桁支持 — 1次不静定構造とたわみ適合法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#たわみ適合法force-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        たわみ適合法(force method)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#適合条件の目標値--なぜ変位ゼロではないか" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        適合条件の目標値 — なぜ「変位ゼロ」ではないか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#なぜ垂直力sinθの単純な静定計算では不十分か" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ「垂直力÷sinθ」の単純な静定計算では不十分か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ワイヤー張力の分解--桁の軸方向圧縮" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ワイヤー張力の分解 — 桁の軸方向圧縮
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#次に読むもの" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -893,6 +954,67 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#10-ワイヤー機の桁支持--1次不静定構造とたわみ適合法" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        10. ワイヤー機の桁支持 — 1次不静定構造とたわみ適合法
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="10. ワイヤー機の桁支持 — 1次不静定構造とたわみ適合法">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#たわみ適合法force-method" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        たわみ適合法(force method)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#適合条件の目標値--なぜ変位ゼロではないか" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        適合条件の目標値 — なぜ「変位ゼロ」ではないか
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#なぜ垂直力sinθの単純な静定計算では不十分か" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        なぜ「垂直力÷sinθ」の単純な静定計算では不十分か
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#ワイヤー張力の分解--桁の軸方向圧縮" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ワイヤー張力の分解 — 桁の軸方向圧縮
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#次に読むもの" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1005,8 +1127,38 @@ Q̄26(θ) = (U2/2)・sin2θ − U3・sin4θ
 </code></pre></div>
 <p>このプログラムでは、<strong>どの材料物性を使うか</strong>(パイプ最外層1枚だけの実物性 vs 積層全体の等価物性)と、<strong>どの厚みを使うか</strong>(パイプだけ vs パイプ+UD補強)の組み合わせで<strong>4通り</strong>の座屈応力を計算し、それぞれを実際にかかる最大曲げ応力で割って安全率としています。どの方式が最も現実に近いかは設計判断の範疇であるため、4方式すべてを並べて出力する構成になっています。</p>
 <p>「積層全体の等価物性」は、座屈評価では<strong>Ex_eff・Ey_eff</strong>の組を使います(§3のA行列の逆行列成分から、Ex_effと同じ要領でEy_effも同様に求められます)。これはEA計算に使うEx_eff・Gxy_eff(§3)とは<strong>別に</strong>A行列から導出する組で、座屈の式が√(Ex・Ey)の形を要求するために必要になります。</p>
+<h2 id="10-ワイヤー機の桁支持--1次不静定構造とたわみ適合法">10. ワイヤー機の桁支持 — 1次不静定構造とたわみ適合法<a class="headerlink" href="#10-ワイヤー機の桁支持--1次不静定構造とたわみ適合法" title="Permanent link">&para;</a></h2>
+<p>ここまでは「翼根で完全固定・翼端は自由」という<strong>片持ち機</strong>を前提にしてきました。ワイヤー機は、これに加えて、桁の途中の1点(翼根からスパン方向に距離xWireの位置)から、胴体下部の固定点(アンカー)まで、引張力のみを負担できる<strong>ワイヤー(ケーブル)</strong> を1本張って桁を支える構造です。</p>
+<p><img alt="ワイヤー機の桁支持と1次不静定" src="../figures/wire_brace_indeterminate.svg" /></p>
+<p>翼根の完全固定は6つの反力成分(Fx, Fy, Fz, Mx, My, Mz)を生みます。ここにワイヤーの反力(張力T、方向はアンカーの位置で決まる固定方向)が1つ加わるため、<strong>未知数は7個</strong>になります。ところが3次元の力・モーメントの釣り合い式は6本しかありません。つまり、<strong>力の釣り合いだけでは解けない「1次不静定」構造</strong>になります(理論編§7のブロックThomas法ソルバーは、翼根完全固定・翼端自由の片持ち梁専用に組まれており、この追加支点をそのまま扱う仕組みを持っていません)。</p>
+<h3 id="たわみ適合法force-method">たわみ適合法(force method)<a class="headerlink" href="#たわみ適合法force-method" title="Permanent link">&para;</a></h3>
+<p>1次不静定構造を解く古典的な方法の一つが、<strong>たわみ適合法</strong>(force method、変位適合法とも呼ばれる、構造力学における重ね合わせの原理の応用)です。考え方はシンプルで、「ワイヤーを1本、仮に切り離してみる」ことで、構造をいったん(片持ち機と同じ)<strong>静定</strong>構造に戻し、切り離した箇所の変位を手がかりに、本来そこにあるはずの反力(ワイヤー張力T)を逆算します。</p>
+<p><img alt="たわみ適合法の3ステップ" src="../figures/wire_force_method.svg" /></p>
+<ol>
+<li><strong>ケース0</strong>: ワイヤーを切り離した状態(=通常の片持ち機と全く同じ)で、実際の空力荷重・自重をかけて解く。ワイヤー取付点の変位を、ワイヤーの方向に投影した値を<strong>δ0</strong>とする。</li>
+<li><strong>ケース1</strong>: 同じ片持ち梁(荷重なし)に、ワイヤー取付点だけへ、ワイヤー方向に沿った<strong>単位張力(1N)</strong> をかけて解く。同じ点の、同じ方向への変位を<strong>δ1</strong>とする(単位張力あたりの変位=柔性係数)。</li>
+<li><strong>適合条件</strong>: ワイヤーは伸びない(剛体)とみなすため、実際の構造での変位は、ケース0とケース1×Tの重ね合わせで、ワイヤー方向にはある決まった値(後述)にならなければならない。この条件からTを逆算する。</li>
+<li><strong>重ね合わせ</strong>: 桁全体の最終的な変形・内力(曲げモーメント・せん断力・軸力など)は「ケース0の結果 + T×ケース1の結果」(この構造が線形弾性である限り、単純な足し算で求まる)。</li>
+</ol>
+<h3 id="適合条件の目標値--なぜ変位ゼロではないか">適合条件の目標値 — なぜ「変位ゼロ」ではないか<a class="headerlink" href="#適合条件の目標値--なぜ変位ゼロではないか" title="Permanent link">&para;</a></h3>
+<p>ワイヤーの長さは、<strong>設計上の定常飛行状態</strong>(桁が空力荷重で上向きにたわみ、ワイヤー取付点が未変形位置から距離δ(steadyDeflection)だけ持ち上がった状態)で、ちょうどアンカーとの間で張った状態になるよう決めます。つまり、「ワイヤー取付点が未変形位置に対して全く動かない」のではなく、「δだけ動いたところで初めてワイヤーが利き始める」という設計です。</p>
+<p>これを線形化して式にすると、ワイヤー方向単位ベクトルを(ux, uy)として、適合条件は</p>
+<div class="highlight"><pre><span></span><code>δ0 + T・δ1 = δ・uy
+</code></pre></div>
+<p>(右辺は「設計上の変位(0, δ)」をワイヤー方向へ投影した値)となり、</p>
+<div class="highlight"><pre><span></span><code>T = (δ・uy − δ0) / δ1
+</code></pre></div>
+<p>でTが求まります。桁の軸方向変位(スパン方向、Ux)は曲げ変位(Uy)に比べて元々ごくわずか(軸剛性EAは曲げ剛性EIに比べて非常に大きいため)なので、この式は実質的に「取付点の実際のたわみUyが、指定したδに近づく」という条件になります。δ=0(つまり目標値をゼロ)とする単純化は、これの特殊ケースにすぎません。</p>
+<h3 id="なぜ垂直力sinθの単純な静定計算では不十分か">なぜ「垂直力÷sinθ」の単純な静定計算では不十分か<a class="headerlink" href="#なぜ垂直力sinθの単純な静定計算では不十分か" title="Permanent link">&para;</a></h3>
+<p>「ワイヤー取付点から外側の荷重を、ワイヤーが100%肩代わりする(その点を単純支持とみなす)」と仮定すれば、その位置のせん断力Fyを使い<code>T = Fy / sinθ</code>という単純な式で張力を求められます(静定問題になります)。しかしこれは、翼根がピン(モーメントを負担しない)であるときにしか厳密には成り立ちません。翼根が完全固定である限り、<strong>桁自身の曲げ剛性が外側の荷重の一部を分担し続ける</strong>ため、この単純な式は張力を過大に見積もります。たわみ適合法は、桁の実際の曲げ剛性(ケース1で計算するδ1に反映される)を通じて、この分担分を正しく考慮に入れます。</p>
+<h3 id="ワイヤー張力の分解--桁の軸方向圧縮">ワイヤー張力の分解 — 桁の軸方向圧縮<a class="headerlink" href="#ワイヤー張力の分解--桁の軸方向圧縮" title="Permanent link">&para;</a></h3>
+<p>求めたワイヤー張力Tは、ワイヤーの角度θ(tanθ = hEffective / xWire、hEffectiveはワイヤー取付点からアンカーまでの実効高さ)を使って、</p>
+<div class="highlight"><pre><span></span><code>桁の軸方向(スパン方向)の圧縮成分 = T・cosθ
+桁に対して垂直な方向(揚力を支える)の成分 = T・sinθ
+</code></pre></div>
+<p>に分解できます。軸方向の圧縮成分は、桁の<strong>座屈</strong>(理論編§9)に直結する重要な値です。θが小さい(ワイヤーがほぼ水平)ほど、同じ垂直支持力を得るために必要な張力が急増し、それに比例して軸圧縮も急増します(sinθが小さいほどT=…/sinθ的に効いてくるため)。ワイヤー取付位置・アンカー位置(角度)の設計は、この垂直支持効果と軸圧縮のトレードオフになります。</p>
 <h2 id="次に読むもの">次に読むもの<a class="headerlink" href="#次に読むもの" title="Permanent link">&para;</a></h2>
-<p>これらの理論が実際のVBAコード(<code>Mod10</code>〜<code>Mod18</code>)のどこにどう対応しているかは、<code>05_構造実装編.md</code>で説明します。</p>
+<p>これらの理論が実際のVBAコード(<code>Mod10</code>〜<code>Mod18</code>、<code>Mod23</code>)のどこにどう対応しているかは、<code>05_構造実装編.md</code>で説明します。</p>
 
 
 
