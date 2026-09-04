@@ -823,6 +823,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#内側区間のオイラー座屈曲げ増幅のチェック2026-09追加" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内側区間のオイラー座屈・曲げ増幅のチェック(2026-09追加)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#二次効果を織り込んだ強度再評価モーメント増幅法2026-09追加" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二次効果を織り込んだ強度再評価(モーメント増幅法、2026-09追加)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#実装時の教訓--適合条件の目標値をゼロにしていた初期実装の誤り" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1154,6 +1176,28 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#内側区間のオイラー座屈曲げ増幅のチェック2026-09追加" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        内側区間のオイラー座屈・曲げ増幅のチェック(2026-09追加)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#二次効果を織り込んだ強度再評価モーメント増幅法2026-09追加" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        二次効果を織り込んだ強度再評価(モーメント増幅法、2026-09追加)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#実装時の教訓--適合条件の目標値をゼロにしていた初期実装の誤り" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1410,6 +1454,64 @@ End If
 <li><strong>取付点でのSFD(せん断力)のジャンプ量</strong>が、CSVサマリ行の「ワイヤー鉛直成分[N]」の値とほぼ一致する(ワイヤーの力が正しい節点・正しい大きさで作用していることの直接的な裏付け)。</li>
 <li>「ワイヤー角度[deg]」が<code>Atan2(hEffective, xWire)</code>の計算値と完全一致する。</li>
 </ul>
+<h3 id="内側区間のオイラー座屈曲げ増幅のチェック2026-09追加">内側区間のオイラー座屈・曲げ増幅のチェック(2026-09追加)<a class="headerlink" href="#内側区間のオイラー座屈曲げ増幅のチェック2026-09追加" title="Permanent link">&para;</a></h3>
+<p>理論編§11の全体座屈・曲げ増幅の概算は、<code>Mod23_ワイヤー機桁解析.EvaluateInboardBuckling</code>が重ね合わせ後の<code>clsSparDeformation</code>から計算し、<code>clsWireResult</code>へ格納します。</p>
+<ul>
+<li><strong>P(圧縮軸力)</strong>: 内側区間の要素(1〜iWire−1)の<code>deformation.Fx(i)</code>の絶対値最大。理論値の<code>T・cosθ</code>(=<code>AxialComponent</code>)とほぼ一致するはずで、両方を出力しているので相互検算になります。</li>
+<li><strong>EI</strong>: 同区間の<code>sec.EIy(i)</code>の最小値(安全側)と平均値。桁はテーパーするため区間内で数倍変わります。</li>
+<li><strong>Pcr・P/Pcr・曲げ増幅率</strong>: <code>FillEulerCheck</code>が<code>k=1.0</code>(両端ピン)と<code>k=0.7</code>(固定-ピン)の2通りを計算。<code>P≧Pcr</code>のときは増幅率が発散するため0を格納し、CSV側(<code>AmpText</code>)で「座屈(P&gt;=Pcr)」という文字列に置き換えて出力します。</li>
+</ul>
+<p>CSVのサマリ行には、ワイヤー張力の4行に続けて内側区間長・圧縮軸力・最小/平均EIy・Pcr・P/Pcr・曲げ増幅率(k=1.0とk=0.7の各3行)が追加されます。</p>
+<p>あわせて、要素ごとの軸力そのものを確認できるよう、<code>output_FEM_analyze_data.csv</code>/<code>keta,aoa=X.csv</code>の<strong>最終列(<code>最大歪</code>の後ろ)に<code>Fx(軸力)[N]</code>列を新規追加</strong>しました(元MATLABには無い列。総列数は49→50列)。ワイヤー取付点を境に内側だけ軸力が立ち上がる様子が直接グラフ化できます。</p>
+<blockquote>
+<p><strong>列を追加する位置の注意</strong>: この列は当初Block Bの2列目(<code>X</code>の直後)に挿入していましたが、それより後ろの既存列がすべて1つずつ右へずれるため、<strong>列位置でCSVを読む外部ツール(機体比較用のExcelブック等)の参照が全部ずれる</strong>という問題が実機で発生しました。既存列の位置を変えないよう、追加列は必ず最終列に置いてください。</p>
+</blockquote>
+<h3 id="二次効果を織り込んだ強度再評価モーメント増幅法2026-09追加">二次効果を織り込んだ強度再評価(モーメント増幅法、2026-09追加)<a class="headerlink" href="#二次効果を織り込んだ強度再評価モーメント増幅法2026-09追加" title="Permanent link">&para;</a></h3>
+<p>上記の増幅率を実際の強度・座屈評価へ織り込む処理も実装しました。<code>Mod23_ワイヤー機桁解析.BuildAmplifiedDeformation</code>が、重ね合わせ後の<code>clsSparDeformation</code>から<strong>内側区間の曲げだけを増幅率倍した別インスタンス</strong>を作り、<code>Mod18_桁構造解析実行</code>がそれを<code>Mod17_桁強度座屈.EvaluateSparStrength</code>へもう一度通して、<code>strengthSecond</code>として返します。<strong>元の<code>strength</code>(一次解析)は書き換えないため、既存の出力・過去結果との比較には影響しません</strong>。</p>
+<p><strong>何を増幅するか</strong>が実装上の要点です。<code>Mod17_桁強度座屈</code>の積層応力は断面内力ではなく<strong>節点回転角の差(<code>dTHy</code>/<code>dTHz</code>=曲率)から歪を作って計算している</strong>ため、<code>MzInt</code>/<code>MyInt</code>だけを増幅しても<code>str2</code>・<code>str_zakutu</code>は一切変わりません。曲げ増幅を強度評価へ反映するには<strong>回転角<code>THy</code>/<code>THz</code>の増幅が必須</strong>です。</p>
+<table>
+<thead>
+<tr>
+<th>増幅する</th>
+<th>増幅しない</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>THy</code>, <code>THz</code>(曲率→歪→積層応力の経路)</td>
+<td><code>Ux</code>(軸方向変位)、<code>THx</code>(ねじれ角)</td>
+</tr>
+<tr>
+<td><code>Uy</code>, <code>Uz</code>, <code>BMD</code>, <code>MyInt</code>, <code>MzInt</code>(表示の一貫性)</td>
+<td><code>Fx</code>(軸力=増幅の原因側)、<code>MxInt</code>、<code>SFD</code></td>
+</tr>
+</tbody>
+</table>
+<p>適用範囲は翼根〜ワイヤー取付節点の内側区間のみ、増幅率は安全側の<code>k=1.0</code>(両端ピン)の値を使います。モーメント増幅法は本来「区間内の最大曲げ」に対する倍率なので、区間全体へ一律に掛けるのは安全側の近似です。<code>P≧Pcr</code>(既に座屈)のときは増幅率が定義できないため<code>Nothing</code>を返し、再評価をスキップします。</p>
+<p>出力は既存列を変えずに末尾へ7列追加しています(総列数50→57列)。</p>
+<table>
+<thead>
+<tr>
+<th>追加列</th>
+<th>内容</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>曲げ増幅率(適用値)</code></td>
+<td>その要素に適用した増幅率(内側区間は<code>1/(1−P/Pcr)</code>、外側は1.0)</td>
+</tr>
+<tr>
+<td><code>str2(二次効果込み)</code> / <code>str2_UD(二次効果込み)</code></td>
+<td>増幅後のTsai-Wu強度比</td>
+</tr>
+<tr>
+<td><code>str_zakutu1〜4(二次効果込み)</code></td>
+<td>増幅後の座屈安全率4方式</td>
+</tr>
+</tbody>
+</table>
+<p>ワイヤー機以外では<code>strengthSecond</code>が渡されないため、これらの列は空欄になります。既存の<code>str2</code>・<code>str_zakutu1〜4</code>(一次解析)と並べて見ることで、二次効果でどれだけ厳しくなるかが直接比較できます。</p>
 <h3 id="実装時の教訓--適合条件の目標値をゼロにしていた初期実装の誤り">実装時の教訓 — 適合条件の目標値をゼロにしていた初期実装の誤り<a class="headerlink" href="#実装時の教訓--適合条件の目標値をゼロにしていた初期実装の誤り" title="Permanent link">&para;</a></h3>
 <p>当初の実装では、適合条件を単純に<code>δ0 + T・δ1 = 0</code>(理論編§10の「目標値=δ・uy」ではなく、目標値を常にゼロ)としていました。この場合でも計算自体はエラーなく走り、一見もっともらしい結果(座屈安全率の改善など)が出ていましたが、<strong>「ワイヤー取付位置の定常時たわみ」に指定した値(例: 0.2m)を反映しても、実際の計算結果のUy(その節点のたわみ)がほぼ0(1mm程度)にしかならない</strong>という形で発覚しました。原因は、ワイヤーの角度(hEffective)の計算にはδ(steadyDeflection)を織り込んでいたのに、適合条件の目標値の方にはδを反映していなかったためです。理論編§10の修正後の式(目標値=δ・uy)に直してからは、CSV上のUy(取付点付近)がδに近い値になることを確認しています。シート入力値と計算結果が食い違う場合は、まずこの適合条件の目標値の設定を疑ってください。</p>
 

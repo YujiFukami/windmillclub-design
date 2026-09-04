@@ -729,6 +729,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#11-ワイヤー機の内側区間--圧縮と曲げの相互作用" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. ワイヤー機の内側区間 — 圧縮と曲げの相互作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. ワイヤー機の内側区間 — 圧縮と曲げの相互作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#オイラー座屈と曲げ増幅の概算" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オイラー座屈と曲げ増幅の概算
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#人力飛行機では特に注意が必要" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        人力飛行機では特に注意が必要
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#次に読むもの" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1015,6 +1054,45 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#11-ワイヤー機の内側区間--圧縮と曲げの相互作用" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        11. ワイヤー機の内側区間 — 圧縮と曲げの相互作用
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="11. ワイヤー機の内側区間 — 圧縮と曲げの相互作用">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#オイラー座屈と曲げ増幅の概算" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        オイラー座屈と曲げ増幅の概算
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#人力飛行機では特に注意が必要" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        人力飛行機では特に注意が必要
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#次に読むもの" class="md-nav__link">
     <span class="md-ellipsis">
       
@@ -1157,6 +1235,29 @@ Q̄26(θ) = (U2/2)・sin2θ − U3・sin4θ
 桁に対して垂直な方向(揚力を支える)の成分 = T・sinθ
 </code></pre></div>
 <p>に分解できます。軸方向の圧縮成分は、桁の<strong>座屈</strong>(理論編§9)に直結する重要な値です。θが小さい(ワイヤーがほぼ水平)ほど、同じ垂直支持力を得るために必要な張力が急増し、それに比例して軸圧縮も急増します(sinθが小さいほどT=…/sinθ的に効いてくるため)。ワイヤー取付位置・アンカー位置(角度)の設計は、この垂直支持効果と軸圧縮のトレードオフになります。</p>
+<h2 id="11-ワイヤー機の内側区間--圧縮と曲げの相互作用">11. ワイヤー機の内側区間 — 圧縮と曲げの相互作用<a class="headerlink" href="#11-ワイヤー機の内側区間--圧縮と曲げの相互作用" title="Permanent link">&para;</a></h2>
+<p>ワイヤー取付点より内側(翼根〜取付点)の桁は、揚力による曲げに加えて、ワイヤー張力の軸方向成分(§10の<code>T・cosθ</code>)による<strong>圧縮</strong>を受けます。この区間で起きることは、実は3つの別々の現象に分けて考える必要があります。</p>
+<ol>
+<li><strong>軸圧縮が応力として足される</strong>: 圧縮による軸応力が曲げ応力に重なり、Tsai-Wu強度比・局部座屈の評価に効きます。</li>
+<li><strong>曲げが増幅される(beam-column効果 / P-Δ効果)</strong>: すでにたわんでいる梁に軸圧縮がかかると、そのたわみ量×圧縮力の分だけ<strong>追加の曲げモーメント</strong>が生まれ、さらにたわむ、という二次的な効果が生じます。</li>
+<li><strong>区間全体が柱として座屈する(オイラー座屈)</strong>: 理論編§9で扱った座屈は、円筒の断面が局所的に潰れる「<strong>局部</strong>座屈」です。これとは別に、内側区間が1本の圧縮材(柱)として横に飛び出す「<strong>全体</strong>座屈」があり、これは全く別の破壊モードです。</li>
+</ol>
+<h3 id="オイラー座屈と曲げ増幅の概算">オイラー座屈と曲げ増幅の概算<a class="headerlink" href="#オイラー座屈と曲げ増幅の概算" title="Permanent link">&para;</a></h3>
+<p>全体座屈の限界荷重(オイラー座屈荷重)と、圧縮による曲げの増幅率は次の式で概算できます。</p>
+<div class="highlight"><pre><span></span><code>Pcr = π²・EI / (k・L)²          … オイラー座屈荷重
+曲げ増幅率 = 1 / (1 − P/Pcr)    … モーメント増幅法
+</code></pre></div>
+<p>Lは内側区間の長さ(=ワイヤー取付位置xWire)、Pは区間にかかる圧縮軸力、kは有効座屈長係数です。翼根は完全固定、ワイヤー取付点はワイヤー方向のみ拘束されるため、kは厳密には<strong>両端ピン(k=1.0)と固定-ピン(k=0.7)の間</strong>になります。EIは区間内で大きくテーパーするため、安全側に最小EIを使います。</p>
+<p><code>P/Pcr</code>が1に近づくほど増幅率は急激に大きくなり、1を超えると全体座屈します。逆に<code>P/Pcr</code>が十分小さければ(目安として0.1以下)、二次効果は数%程度で無視できます。</p>
+<h3 id="人力飛行機では特に注意が必要">人力飛行機では特に注意が必要<a class="headerlink" href="#人力飛行機では特に注意が必要" title="Permanent link">&para;</a></h3>
+<p>一般の航空機構造では、ストラット/ワイヤー支持翼の内側桁をbeam-column(圧縮+曲げの相互作用)として扱うのは標準的な手順です。人力飛行機の場合はさらに事情が厳しく、Cruz &amp; Drela(<em>Structural Design Conditions for Human Powered Aircraft</em>, OSTIV 1989、Daedalusの設計者ら)は次の点を指摘しています。</p>
+<ul>
+<li>人力機の構造は大きく柔軟なため、<strong>通常の航空機では無視される二次荷重が支配的になる</strong></li>
+<li>人力機の破壊は突然かつ破局的で、<strong>全体座屈と局部座屈の両方</strong>が主要な破壊モードである</li>
+<li><strong>剛体仮定は使えず、構造変形を考慮した解析が必要</strong>である</li>
+</ul>
+<p>また、ワイヤーは引張しか負担できないため、<strong>負のG・突風の谷・地上での取り回しではワイヤーが緩んで無効化され、純粋な片持ち機に戻ります</strong>。このときの翼根曲げは大幅に増えるので、ワイヤー機として設計する場合でも「ワイヤーなし」の状態が成立しているかを必ず併せて確認する必要があります(本プログラムでは「ワイヤーをつける」をNOにして実行すればこの状態を評価できます)。</p>
+<p>なお、現在のFEM(<code>Mod16_桁FEM</code>)は線形弾性・小変形の枠組みで、幾何剛性行列を持たないため、上記2番目の<strong>曲げ増幅は解析結果そのものには反映されていません</strong>。3番目の全体座屈も含め、上式による概算値を出力に添えることで確認する形にしています(実装は<code>05_構造実装編.md</code>§12を参照)。</p>
 <h2 id="次に読むもの">次に読むもの<a class="headerlink" href="#次に読むもの" title="Permanent link">&para;</a></h2>
 <p>これらの理論が実際のVBAコード(<code>Mod10</code>〜<code>Mod18</code>、<code>Mod23</code>)のどこにどう対応しているかは、<code>05_構造実装編.md</code>で説明します。</p>
 
